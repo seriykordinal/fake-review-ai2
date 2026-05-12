@@ -1,99 +1,77 @@
-#!/usr/bin/env bash
+#!/bin/bash
+echo "НЕ РАБОТАЕТ!!!!!"
+exit 0
 
-# =============================================================================
 
-# start.sh — Запуск проекта FakeCheck (Linux / macOS)
 
-# Запуск: chmod +x start.sh && ./start.sh
 
-# =============================================================================
+echo "=== Запуск двух процессов (Go + Python) ==="
+echo "Для завершения нажмите Ctrl+C"
 
-set -e
-ROOT="$(cd "$(dirname "$0")" && pwd)"
-PIDS=()
-
-step() { echo -e "\n\033[36m>>> $1\033[0m"; }
-ok()   { echo -e "    \033[32m[OK]\033[0m $1"; }
-warn() { echo -e "    \033[33m[WARN]\033[0m $1"; }
-fail() { echo -e "    \033[31m[ERROR]\033[0m $1"; exit 1; }
-
-# Завершаем дочерние процессы при выходе
-
-cleanup() {
-echo -e "\nОстановка серверов…"
-for pid in "${PIDS[@]}"; do
-kill "$pid" 2>/dev/null && echo "  Остановлен PID $pid"
-done
-}
-trap cleanup EXIT INT TERM
-
-# ── 1. Компиляция TypeScript ──────────────────────────────────────────────────
-
-step "Компиляция TypeScript…"
-cd "$ROOT"
-if ! npx tsc –project tsconfig.json 2>&1; then
-fail "Ошибка компиляции TypeScript"
-fi
-ok "TypeScript скомпилирован"
-
-# ── 2. Go-сервер ──────────────────────────────────────────────────────────────
-
-step "Запуск Go-сервера…"
-cd "$ROOT/backend-go"
+# Переход в директорию бэкенда на Go
+echo "[1/2] Переход в ./backend-go, компиляция TypeScript..."
+cd ./backend-go || { echo "Ошибка: не удалось перейти в ./backend-go"; exit 1; }
+npx tsc
+echo "Запуск Go-процесса..."
 go run . &
-GO_PID=$!
-PIDS+=($GO_PID)
-ok "Go-сервер запущен (PID $GO_PID) → http://localhost:8080"
-sleep 2
+PID_GO=$!
+echo "   Go процесс запущен, PID: $PID_GO"
 
-# ── 3. Проверка ML-модели ─────────────────────────────────────────────────────
 
-step "Проверка ML-модели…"
-cd "$ROOT"
-MODEL="backend-python/models/fake_review_model.h5"
-TFIDF="backend-python/models/tfidf_vectorizer.pkl"
-DATASET="backend-python/dataset/wb_reviews.csv"
 
-if [ ! -f "$MODEL" ] || [ ! -f "$TFIDF" ]; then
-warn "Модель не найдена — запускаем обучение"
+# Переход в директорию бэкенда на Python
+echo "[2/2] Переход в ../backend-python..."
+cd ../backend-python || { echo "Ошибка: не удалось перейти в ../backend-python"; exit 1; }
+echo "Запуск Python-процесса..."
 
-```
-if [ ! -f "$DATASET" ]; then
-    warn "Датасет не найден — скачиваем"
-    python3 backend-python/dataset/get_dataset.py || \
-        warn "Не удалось скачать датасет. Запустите вручную: python3 backend-python/dataset/get_dataset.py"
+
+if [ ! -f "requirements.txt" ]; then
+    echo "   ВНИМАНИЕ: файл requirements.txt не найден, зависимости не будут установлены."
 else
-    ok "Датасет уже есть"
+    # Создание виртуального окружения, если его нет
+    if [ ! -d "venv" ]; then
+        echo "   Создание виртуального окружения (venv)..."
+        python3 -m venv venv
+    fi
+    
+    # Активация виртуального окружения и установка зависимостей
+    echo "   Активация venv и установка зависимостей из requirements.txt..."
+    source venv/bin/activate
+    pip install --upgrade pip
+    pip install -r requirements.txt
+    echo "   Зависимости установлены."
 fi
 
-python3 backend-python/train.py || \
-    warn "Ошибка обучения. Запустите вручную: python3 backend-python/train.py"
-ok "Модель обучена"
-```
 
-else
-ok "Модель уже обучена"
-fi
+python3 main.py &
+PID_PYTHON=$!
+echo "   Python процесс запущен, PID: $PID_PYTHON"
 
-# ── 4. Python-сервер ──────────────────────────────────────────────────────────
 
-step "Запуск Python-сервера…"
-cd "$ROOT/backend-python"
-python3 -m uvicorn main:app –host 0.0.0.0 –port 8000 &
-PY_PID=$!
-PIDS+=($PY_PID)
-ok "Python-сервер запущен (PID $PY_PID) → http://localhost:8000"
 
-# ── Итог ──────────────────────────────────────────────────────────────────────
 
+echo "----------------------------------------"
+echo "Оба процесса работают. Нажмите Ctrl+C для останова."
 echo ""
-echo "============================================="
-echo -e "  \033[32mПроект запущен!\033[0m"
-echo "  Сайт:   http://localhost:8080"
-echo "  ML API: http://localhost:8000/health"
-echo "  Для остановки нажмите Ctrl+C"
-echo "============================================="
 
-# Держим скрипт живым пока работает Go-сервер
 
-wait $GO_PID
+
+# Функция для корректного завершения
+cleanup() {
+    echo ""
+    echo "=== Получен сигнал завершения (Ctrl+C) ==="
+    echo "Останавливаем Go процесс (PID $PID_GO)..."
+    kill $PID_GO 2>/dev/null
+    echo "Останавливаем Python процесс (PID $PID_PYTHON)..."
+    kill $PID_PYTHON 2>/dev/null
+    echo "Ожидание завершения процессов..."
+    wait $PID_GO $PID_PYTHON 2>/dev/null
+    echo "Все процессы остановлены. Скрипт завершён."
+    exit 0
+}
+
+# Устанавливаем обработчик на Ctrl+C (SIGINT) и SIGTERM
+trap cleanup SIGINT SIGTERM
+
+# Ожидаем завершения любого из процессов (например, если один упадёт сам)
+wait

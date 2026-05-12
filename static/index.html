@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FakeCheck — Анализ отзывов WB</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<header class="header">
+    <div class="logo">FakeCheck</div>
+    <div id="headerActions" class="header-actions">
+        <div id="guestActions" class="guest-actions">
+            <button class="btn-ghost" id="openLoginBtn">Войти</button>
+            <button class="btn-primary-sm" id="openRegisterBtn">Регистрация</button>
+        </div>
+        <button class="profile-trigger hidden" id="profileTrigger">
+            <span class="profile-avatar" id="profileAvatar">?</span>
+            <span id="headerEmail" class="profile-email"></span>
+            <svg class="chevron" viewBox="0 0 10 6" fill="none"><path d="M1 1l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+        </button>
+    </div>
+</header>
+
+<div id="profileDropdown" class="profile-dropdown hidden">
+    <div class="dropdown-user">
+        <div class="dropdown-avatar" id="dropAvatar"></div>
+        <div>
+            <div class="dropdown-email" id="dropEmail"></div>
+            <div class="dropdown-role-badge" id="dropRole"></div>
+        </div>
+    </div>
+    <div class="dropdown-meta" id="dropCreated"></div>
+    <div class="dropdown-sep"></div>
+    <button class="dd-item" id="ddHistoryBtn">
+        <svg viewBox="0 0 20 20" fill="none"><path d="M10 2a8 8 0 100 16A8 8 0 0010 2zm0 4v5l3 2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+        История анализов
+    </button>
+    <button class="dd-item dd-admin hidden" id="ddAdminBtn">
+        <svg viewBox="0 0 20 20" fill="none"><path d="M10 2l2.4 4.8 5.3.8-3.8 3.7.9 5.2L10 14l-4.8 2.5.9-5.2L2.3 7.6l5.3-.8L10 2z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/></svg>
+        Админ-панель
+    </button>
+    <div class="dropdown-sep"></div>
+    <button class="dd-item dd-danger" id="ddDeleteBtn">
+        <svg viewBox="0 0 20 20" fill="none"><path d="M8 4h4M3 6h14m-1 0l-.867 10.142A2 2 0 0113.138 18H6.862a2 2 0 01-1.995-1.858L4 6z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+        Удалить аккаунт
+    </button>
+    <button class="dd-item" id="ddLogoutBtn">
+        <svg viewBox="0 0 20 20" fill="none"><path d="M13 3h4v14h-4M9 7l-4 3 4 3M5 10h8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        Выйти
+    </button>
+</div>
+
+<main class="main">
+    <!-- Гостевой экран -->
+    <div id="publicContent" class="screen">
+        <div class="screen-inner">
+            <span class="screen-tag">Бесплатно</span>
+            <h1 class="screen-title">Проверьте отзыв<br>на подлинность</h1>
+            <p class="screen-sub">Вставьте текст — алгоритм определит вероятность того, что отзыв фейковый</p>
+            <div class="card">
+                <textarea id="reviewText" rows="5" placeholder="Вставьте текст отзыва..."></textarea>
+                <button id="analyzeBtn" class="btn-primary w-full">Проверить отзыв</button>
+                <div id="singleResult" class="inline-result hidden"></div>
+            </div>
+            <p class="screen-hint">Хотите анализировать целые товары? <button class="link-btn" id="hintLoginBtn">Войдите</button> или <button class="link-btn" id="hintRegBtn">зарегистрируйтесь</button></p>
+        </div>
+    </div>
+
+    <!-- Авторизованный экран -->
+    <div id="authContent" class="screen hidden">
+        <div class="screen-inner">
+            <span class="screen-tag">Анализ товара</span>
+            <h1 class="screen-title">Анализ отзывов<br>Wildberries</h1>
+            <p class="screen-sub">Вставьте ссылку на товар — проверим все отзывы разом</p>
+            <div class="card">
+                <div class="url-row">
+                    <input type="text" id="productUrl" placeholder="https://www.wildberries.ru/catalog/.../detail.aspx">
+                    <button id="analyzeProductBtn" class="btn-primary">Анализировать</button>
+                </div>
+            </div>
+            <div id="productResults" class="results hidden"></div>
+        </div>
+    </div>
+
+    <!-- Экран истории -->
+    <div id="historyContent" class="screen hidden">
+        <div class="screen-inner">
+            <span class="screen-tag">История</span>
+            <h1 class="screen-title">История анализов</h1>
+            <p class="screen-sub">Все товары, которые вы проверяли ранее</p>
+            <div id="historyList" class="history-list"></div>
+            <button class="btn-ghost mt-16" id="backFromHistoryBtn">← Назад</button>
+        </div>
+    </div>
+</main>
+
+<!-- Модалка: Вход -->
+<div id="loginModal" class="modal-overlay hidden">
+    <div class="modal">
+        <div class="modal-head">
+            <h3>Вход</h3>
+            <button class="close-btn" data-close="loginModal">×</button>
+        </div>
+        <div class="modal-body">
+            <div class="field">
+                <label>Email</label>
+                <input type="email" id="loginEmail" placeholder="you@example.com">
+            </div>
+            <div class="field">
+                <label>Пароль</label>
+                <input type="password" id="loginPassword" placeholder="••••••••">
+            </div>
+            <p id="loginError" class="field-err hidden"></p>
+            <button id="doLoginBtn" class="btn-primary w-full">Войти</button>
+        </div>
+    </div>
+</div>
+
+<!-- Модалка: Регистрация -->
+<div id="registerModal" class="modal-overlay hidden">
+    <div class="modal">
+        <div class="modal-head">
+            <h3>Регистрация</h3>
+            <button class="close-btn" data-close="registerModal">×</button>
+        </div>
+        <div class="modal-body">
+            <div class="field">
+                <label>Email</label>
+                <input type="email" id="regEmail" placeholder="you@example.com">
+            </div>
+            <div class="field">
+                <label>Пароль</label>
+                <input type="password" id="regPassword" placeholder="••••••••">
+            </div>
+            <button id="doRegisterBtn" class="btn-primary w-full">Зарегистрироваться</button>
+            <div id="verifyPanel" class="verify-block hidden">
+                <p class="verify-hint">Введите код подтверждения из письма</p>
+                <div class="field">
+                    <input type="text" id="verifyCode" placeholder="000000" maxlength="6" class="code-input">
+                </div>
+                <button id="doVerifyBtn" class="btn-primary w-full">Подтвердить</button>
+            </div>
+            <p id="regError" class="field-err hidden"></p>
+        </div>
+    </div>
+</div>
+
+<!-- Модалка: Подтверждение удаления -->
+<div id="deleteModal" class="modal-overlay hidden">
+    <div class="modal modal-sm">
+        <div class="modal-head">
+            <h3>Удалить аккаунт?</h3>
+            <button class="close-btn" data-close="deleteModal">×</button>
+        </div>
+        <div class="modal-body">
+            <p class="confirm-text">Это действие необратимо. Все ваши данные и история анализов будут удалены навсегда.</p>
+            <div class="confirm-row">
+                <button class="btn-ghost" data-close="deleteModal">Отмена</button>
+                <button id="confirmDeleteBtn" class="btn-danger">Удалить</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="toast" class="toast hidden"></div>
+
+<script type="module" src="/static/app.js"></script>
+</body>
+</html>

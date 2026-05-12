@@ -1,0 +1,27 @@
+{
+  "database": {
+    "host": "localhost",
+    "port": 5432,
+    "user": "postgres",
+    "password": "your_app_password",
+    "dbname": "fake-review-ai2"
+  },
+  "jwt": {
+    "secret": "your_key"
+  },
+  "go_server": {
+    "port": 8080
+  },
+  "python_server": {
+    "host": "localhost",
+    "port": 8000
+  },
+  "email": {
+    "from": "",
+    "password": "your_app_password",
+    "smtp_host": "smtp.gmail.com",
+    "smtp_port": "587"
+  },
+  "email_verification_enabled": false,
+  "debug": true
+}

@@ -33,7 +33,6 @@ func (s *AnalysisService) AnalyzeText(text string) (float64, error) {
 	return result.FakeProbability, nil
 }
 
-// AnalyzeTexts отправляет множество текстов одним запросом
 func (s *AnalysisService) AnalyzeTexts(texts []string) ([]float64, error) {
 	pythonURL := fmt.Sprintf("http://%s:%d/predict_batch", s.pythonHost, s.pythonPort)
 	reqBody := map[string][]string{"texts": texts}

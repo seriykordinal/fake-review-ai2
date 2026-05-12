@@ -1,17 +1,3 @@
-"""
-Загружает датасет WB-отзывов с HuggingFace и сохраняет в CSV.
-
-Датасет: deepRost/wb-reviews
-Колонки: review_text (str), sentiment (int: 0=негатив, 1=позитив)
-
-Для детектирования фейков используем sentiment как прокси:
-фейковые отзывы чаще имеют аномально высокий позитив (5 звёзд без текста),
-но в данном датасете метка — это наша целевая переменная для классификации.
-
-Запуск: python dataset/get_dataset.py
-Результат: dataset/wb_reviews.csv
-"""
-
 import io
 import os
 import sys
@@ -37,7 +23,6 @@ def parse_csv(content: bytes) -> pd.DataFrame:
         try:
             text = content.decode(enc)
             df = pd.read_csv(io.StringIO(text), sep=None, engine="python")
-            # Проверяем наличие читаемого текста (есть кириллица, нет мусора)
             sample = str(df.iloc[0, 0]) if len(df) > 0 else ""
             if "?" not in sample and any(ord(c) > 127 for c in sample[:100]):
                 print(f"Кодировка: {enc}")
@@ -48,9 +33,7 @@ def parse_csv(content: bytes) -> pd.DataFrame:
 
 
 def normalize_columns(df: pd.DataFrame) -> pd.DataFrame:
-    """Приводим к стандартным именам колонок."""
     col_map = {
-        # возможные варианты имён в датасете
         "text": "review_text",
         "review": "review_text",
         "comment": "review_text",
@@ -60,7 +43,6 @@ def normalize_columns(df: pd.DataFrame) -> pd.DataFrame:
     }
     df = df.rename(columns={c: col_map[c] for c in df.columns if c in col_map})
 
-    # Если колонок ровно 2 и они всё ещё не названы стандартно
     if "review_text" not in df.columns and len(df.columns) == 2:
         df.columns = ["review_text", "sentiment"]
 

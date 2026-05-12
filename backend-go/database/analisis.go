@@ -52,7 +52,6 @@ func GetExistingProductAnalysisGlobal(productID int) (analysisID int, totalRevie
 	return analysisID, totalReviews, reviews, nil
 }
 
-// === Админские функции ===
 type ProductAnalysisSummary struct {
 	AnalysisID   int       `json:"analysis_id"`
 	UserID       int       `json:"user_id"`
@@ -63,7 +62,6 @@ type ProductAnalysisSummary struct {
 	AnalyzedAt   time.Time `json:"analyzed_at"`
 }
 
-// GetAllProductAnalyses возвращает все анализы (для админа)
 func GetAllProductAnalyses() ([]ProductAnalysisSummary, error) {
 	rows, err := DB.Query(`
         SELECT pa.id, pa.user_id, u.email, pa.product_id, pa.product_url, pa.total_reviews, pa.analyzed_at
@@ -87,12 +85,10 @@ func GetAllProductAnalyses() ([]ProductAnalysisSummary, error) {
 }
 
 func DeleteProductAnalysis(analysisID int) error {
-	// Due to CASCADE, review_analysis records will be deleted automatically
 	_, err := DB.Exec(`DELETE FROM product_analysis WHERE id = $1`, analysisID)
 	return err
 }
 
-// GetGlobalStats возвращает общую статистику для админ-панели
 type GlobalStats struct {
 	TotalUsers           int     `json:"total_users"`
 	TotalAnalyses        int     `json:"total_analyses"`
@@ -113,7 +109,6 @@ func GetGlobalStats() (GlobalStats, error) {
 	return stats, err
 }
 
-// GetUserProductAnalyses возвращает историю анализов конкретного пользователя
 func GetUserProductAnalyses(userID int) ([]ProductAnalysisSummary, error) {
 	rows, err := DB.Query(`
         SELECT pa.id, pa.user_id, u.email, pa.product_id, pa.product_url, pa.total_reviews, pa.analyzed_at

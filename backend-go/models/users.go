@@ -30,5 +30,5 @@ type LoginRequest struct {
 
 type UpdateRoleRequest struct {
 	Email string `json:"email"`
-	Role  string `json:"role"` // "admin" или "user"
+	Role  string `json:"role"`
 }

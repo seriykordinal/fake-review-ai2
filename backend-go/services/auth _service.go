@@ -25,7 +25,6 @@ func NewAuthService(emailService *EmailService, jwtService *JWTService, verifica
 	}
 }
 
-// generateCode возвращает криптографически случайный 6-значный код
 func generateCode() (string, error) {
 	n, err := rand.Int(rand.Reader, big.NewInt(1_000_000))
 	if err != nil {

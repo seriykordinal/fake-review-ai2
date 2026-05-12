@@ -19,7 +19,6 @@ func NewAnalysisHandler(analysisService *services.AnalysisService) *AnalysisHand
 	return &AnalysisHandler{analysisService: analysisService}
 }
 
-// POST /api/analyze — публичный анализ одного текста
 func (h *AnalysisHandler) AnalyzeReview(w http.ResponseWriter, r *http.Request) {
 	var req models.AnalyzeRequest
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
@@ -34,7 +33,6 @@ func (h *AnalysisHandler) AnalyzeReview(w http.ResponseWriter, r *http.Request) 
 	writeJSON(w, models.AnalyzeResponse{FakeProbability: prob})
 }
 
-// POST /api/analyze_product — анализ товара по URL (требует JWT)
 func (h *AnalysisHandler) AnalyzeProduct(w http.ResponseWriter, r *http.Request) {
 	claims := r.Context().Value(middleware.UserContextKey).(*services.Claims)
 
@@ -102,7 +100,6 @@ func (h *AnalysisHandler) AnalyzeProduct(w http.ResponseWriter, r *http.Request)
 	writeJSON(w, buildResponse(productID, reviews))
 }
 
-// GET /api/history — история анализов текущего пользователя
 func (h *AnalysisHandler) GetHistory(w http.ResponseWriter, r *http.Request) {
 	claims := r.Context().Value(middleware.UserContextKey).(*services.Claims)
 	analyses, err := database.GetUserProductAnalyses(claims.UserID)
@@ -115,8 +112,6 @@ func (h *AnalysisHandler) GetHistory(w http.ResponseWriter, r *http.Request) {
 	}
 	writeJSON(w, analyses)
 }
-
-// --- helpers ---
 
 func (h *AnalysisHandler) loadFromCache(productID int) *models.ProductAnalysisResponse {
 	_, totalReviews, cachedReviews, err := database.GetExistingProductAnalysisGlobal(productID)

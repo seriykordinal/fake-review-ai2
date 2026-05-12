@@ -7,7 +7,6 @@ import (
 )
 
 func CreateUserTable() error {
-	// Таблица должна уже существовать, но для полноты
 	_, err := DB.Exec(`
         CREATE TABLE IF NOT EXISTS users (
             id SERIAL PRIMARY KEY,
@@ -67,7 +66,6 @@ func VerifyUser(email string) error {
 	return err
 }
 
-// === Админские функции ===
 func GetAllUsers() ([]models.User, error) {
 	rows, err := DB.Query(`
         SELECT id, email, role, is_verified, created_at

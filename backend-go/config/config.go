@@ -36,7 +36,6 @@ type Config struct {
 	Debug                    bool `json:"debug"`
 }
 
-// Global — глобальный экземпляр конфига, доступный всем пакетам через config.Global
 var Global *Config
 
 func Load() (*Config, error) {
@@ -58,7 +57,6 @@ func Load() (*Config, error) {
 	}
 	Global = &cfg
 
-	// Если debug=false — отключаем стандартный лог-вывод
 	if !cfg.Debug {
 		log.SetOutput(io.Discard)
 	} else {

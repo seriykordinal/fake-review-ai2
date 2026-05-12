@@ -1,24 +1,9 @@
-"""
-Обучение модели детектирования фейковых отзывов WB.
-
-Датасет: dataset/wb_reviews.csv (скачать через dataset/get_dataset.py)
-Модель:  models/fake_review_model.h5
-TF-IDF:  models/tfidf_vectorizer.pkl
-
-Датасет deepRost/wb-reviews имеет 3 класса sentiment: 0, 1, 2.
-Для оценки "фейковости" в main.py используем вероятность класса 0 (негатив).
-
-Запуск:
-    python dataset/get_dataset.py   # один раз
-    python train.py
-"""
-
 import os
 import pickle
 import numpy as np
 import pandas as pd
 import matplotlib
-matplotlib.use("Agg")  # без GUI — сохраняем в файл
+matplotlib.use("Agg")  
 import matplotlib.pyplot as plt
 
 from sklearn.model_selection import train_test_split
@@ -30,7 +15,6 @@ from keras.models import Sequential
 from keras.layers import Dense
 from keras.optimizers import Adam
 
-# ───────────── Пути ─────────────
 BASE_DIR     = os.path.dirname(__file__)
 DATASET_PATH = os.path.join(BASE_DIR, "dataset", "wb_reviews.csv")
 MODELS_DIR   = os.path.join(BASE_DIR, "models")
@@ -40,7 +24,6 @@ CM_PATH      = os.path.join(MODELS_DIR, "confusion_matrix.png")
 
 os.makedirs(MODELS_DIR, exist_ok=True)
 
-# ───────────── Загрузка датасета ─────────────
 print("Загружаем датасет...")
 if not os.path.exists(DATASET_PATH):
     raise FileNotFoundError(
@@ -52,18 +35,15 @@ df = pd.read_csv(DATASET_PATH)
 print(f"Загружено строк: {len(df)}")
 print(f"Распределение меток:\n{df['sentiment'].value_counts().sort_index().to_string()}\n")
 
-# ───────────── Подготовка данных ─────────────
 X_text = df["review_text"].astype(str).values
 y_raw  = df["sentiment"].values
 
-# LabelEncoder приводит метки к последовательным целым 0..N-1
 le = LabelEncoder()
 y = le.fit_transform(y_raw).astype(np.int32)
 classes     = le.classes_
 num_classes = len(classes)
 print(f"Классы: {classes}  (всего: {num_classes})")
 
-# TF-IDF векторизация
 print("Векторизация TF-IDF...")
 tfidf = TfidfVectorizer(
     max_features=5000,
@@ -76,19 +56,16 @@ tfidf = TfidfVectorizer(
 X = tfidf.fit_transform(X_text).toarray().astype(np.float32)
 print(f"Размерность признаков: {X.shape}")
 
-# Сохраняем векторизатор — нужен при инференсе
 with open(TFIDF_PATH, "wb") as f:
     pickle.dump(tfidf, f)
 print(f"TF-IDF сохранён: {TFIDF_PATH}")
 
-# Разбивка train/test
 X_train, X_test, y_train, y_test = train_test_split(
     X, y, test_size=0.2, random_state=42, stratify=y
 )
 print(f"Train: {len(X_train)}, Test: {len(X_test)}\n")
 
-# ───────────── Архитектура модели ─────────────
-# Выходной слой — num_classes нейронов (определяется из данных автоматически)
+
 model = Sequential([
     Dense(units=32, activation="relu", input_shape=(X_train.shape[1],)),
     Dense(units=16, activation="relu"),
@@ -103,7 +80,6 @@ model.compile(
     metrics=["accuracy"],
 )
 
-# ───────────── Обучение ─────────────
 history = model.fit(
     x=X_train,
     y=y_train,
@@ -113,7 +89,6 @@ history = model.fit(
     verbose=1,
 )
 
-# ───────────── Оценка ─────────────
 loss, accuracy = model.evaluate(X_test, y_test, verbose=0)
 print(f"\nТочность на тесте: {accuracy:.4f}  |  Loss: {loss:.4f}")
 
@@ -124,7 +99,6 @@ print("\n--- Метрики ---")
 label_names = [str(c) for c in classes]
 print(classification_report(y_test, y_pred, target_names=label_names))
 
-# ───────────── Confusion Matrix ─────────────
 cm = confusion_matrix(y_test, y_pred)
 
 fig, ax = plt.subplots(figsize=(5, 4))
@@ -149,7 +123,6 @@ fig.savefig(CM_PATH, dpi=100)
 print(f"\nМатрица ошибок сохранена: {CM_PATH}")
 plt.close(fig)
 
-# ───────────── Сохранение модели ─────────────
 model.save(MODEL_PATH)
 print(f"Модель сохранена: {MODEL_PATH}")
 

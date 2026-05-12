@@ -1,4 +1,4 @@
-# FakeCheck — Детектор фейковых отзывов Wildberries
+# FakeCheck — Сервис выявления фейковых отзывов 
 
 Веб-сервис для анализа отзывов на товары Wildberries с помощью машинного обучения.
 
@@ -6,35 +6,55 @@
 
 |Слой     |Технология                        |
 |---------|----------------------------------|
-|Фронтенд |TypeScript (Vanilla), HTML/CSS    |
-|Go-сервер|Go + Gorilla Mux, PostgreSQL      |
+|Фронтенд |TypeScript, HTML/CSS              |
+|Go-сервер|Go, PostgreSQL                    |
 |ML-сервис|Python + FastAPI, TensorFlow/Keras|
 |Парсер   |chromedp (headless Chrome)        |
 
 ## Структура проекта
 
 ```
-fake-review-ai2/
-├── backend-go/            # Go REST API
-│   ├── config/            # Загрузка конфигурации
-│   ├── database/          # Работа с PostgreSQL
-│   ├── handlers/          # HTTP-обработчики
-│   ├── middleware/        # JWT-аутентификация, RBAC
-│   ├── models/            # Структуры данных
-│   └── services/          # Бизнес-логика, WB-парсер
-├── backend-python/        # ML-сервис (FastAPI)
-│   ├── dataset/           # Скрипт загрузки датасета
-│   ├── models/            # Обученная модель (.h5) и TF-IDF (.pkl)
-│   ├── main.py            # FastAPI сервер
-│   └── train.py           # Обучение модели
-├── frontend/              # TypeScript-исходники
-│   ├── services/          # API-клиенты
-│   ├── types/             # TypeScript-типы
-│   └── utils/             # Вспомогательные утилиты
-├── static/                # Скомпилированный фронтенд
-├── settings.json          # Конфигурация проекта
-├── start.ps1              # Скрипт запуска (Windows)
-└── README.md
+
+
+fake-review-ai1/
+├── README.md
+├── backend-go/
+│   ├── config/
+│   ├── database/
+│   ├── go.mod
+│   ├── go.sum
+│   ├── handlers/
+│   ├── main.go
+│   ├── middleware/
+│   ├── models/
+│   └── services/
+│       
+├── backend-python/
+│   ├── dataset/
+│   ├── main.py
+│   ├── models/
+│   ├── requirements.txt
+│   ├── train.py
+│   └── venv/
+|
+├── frontend/
+│   ├── admin-app.ts
+│   ├── app.ts
+│   ├── services/
+│   ├── types/
+│   └── utils/
+│       
+├── static/
+|
+├── node_modules/
+├── package-lock.json
+├── package.json
+├── settings.example.json
+├── settings.json
+├── start.sh
+│   
+└── tsconfig.json
+
 ```
 
 ## Требования
@@ -48,7 +68,7 @@ fake-review-ai2/
 Установка Python-зависимостей:
 
 ```bash
-pip install fastapi uvicorn tensorflow scikit-learn pandas requests
+pip install requirements.txt
 ```
 
 ## Настройка
@@ -127,7 +147,7 @@ python backend-python/dataset/get_dataset.py
 python backend-python/train.py
 
 # 5. Python-сервер
-cd backend-python && uvicorn main:app --host 0.0.0.0 --port 8000
+cd backend-python && python main.py
 ```
 
 После запуска сайт доступен по адресу: **http://localhost:8080**

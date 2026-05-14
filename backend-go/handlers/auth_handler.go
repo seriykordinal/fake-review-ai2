@@ -82,6 +82,8 @@ func (h *AuthHandler) Login(w http.ResponseWriter, r *http.Request) {
 	writeJSON(w, map[string]string{"token": token})
 }
 
+// Profile возвращает полные данные профиля: id, email, role, created_at.
+// Используется как на главной странице, так и в админ-панели.
 func (h *AuthHandler) Profile(w http.ResponseWriter, r *http.Request) {
 	claims := r.Context().Value(middleware.UserContextKey).(*services.Claims)
 	user, err := database.FindUserByEmail(claims.Email)
@@ -90,23 +92,10 @@ func (h *AuthHandler) Profile(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	writeJSON(w, map[string]any{
+		"id":         user.ID,
 		"email":      user.Email,
 		"role":       user.Role,
 		"created_at": user.CreatedAt.UTC().Format("2006-01-02T15:04:05Z"),
-	})
-}
-
-func (h *AuthHandler) Me(w http.ResponseWriter, r *http.Request) {
-	claims := r.Context().Value(middleware.UserContextKey).(*services.Claims)
-	user, err := database.FindUserByEmail(claims.Email)
-	if err != nil || user == nil {
-		writeJSONError(w, "User not found", http.StatusNotFound)
-		return
-	}
-	writeJSON(w, map[string]any{
-		"id":    user.ID,
-		"email": user.Email,
-		"role":  user.Role,
 	})
 }
 

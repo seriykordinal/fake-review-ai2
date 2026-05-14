@@ -158,7 +158,7 @@ function attachProductEvents() {
 }
 async function initAdmin() {
     try {
-        const me = await AuthService.getMe(token);
+        const me = await AuthService.getProfile(token);
         currentUserRole = me.role;
         if (currentUserRole !== 'admin' && currentUserRole !== 'super_admin') {
             throw new Error('Forbidden');

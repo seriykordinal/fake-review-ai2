@@ -21,9 +21,6 @@ export class AuthService {
     static async getProfile(token) {
         return api.get('/api/profile', token);
     }
-    static async getMe(token) {
-        return api.get('/api/me', token);
-    }
 }
 AuthService.TOKEN_KEY = 'token';
 //# sourceMappingURL=auth.js.map

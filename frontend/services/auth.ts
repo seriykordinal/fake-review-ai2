@@ -1,5 +1,5 @@
 import { api } from '../utils/api.js';
-import type { Profile, User } from '../types/index.js';
+import type { Profile } from '../types/index.js';
 
 export class AuthService {
   private static TOKEN_KEY = 'token';
@@ -30,9 +30,5 @@ export class AuthService {
 
   static async getProfile(token: string): Promise<Profile> {
     return api.get<Profile>('/api/profile', token);
-  }
-
-  static async getMe(token: string): Promise<User> {
-    return api.get<User>('/api/me', token);
   }
 }

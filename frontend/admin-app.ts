@@ -2,7 +2,7 @@ import { getElement } from './utils/dom.js';
 import { escapeHtml, formatDate, showMessage } from './utils/helpers.js';
 import { AuthService } from './services/auth.js';
 import { AdminService } from './services/admin.js';
-import type { User, ProductAnalysis, Stats } from './types/index.js';
+import type { Profile, User, ProductAnalysis, Stats } from './types/index.js';
 
 const statsDiv         = getElement('stats');
 const usersTableBody   = document.querySelector('#usersTable tbody') as HTMLElement;
@@ -15,7 +15,7 @@ const logoutAdminBtn   = getElement<HTMLButtonElement>('logoutBtn');
 let token = AuthService.getToken();
 if (!token) window.location.href = '/';
 
-let currentUserRole: User['role'] = 'user';
+let currentUserRole: Profile['role'] = 'user';
 
 function showError(msg: string): void {
   alert(msg);
@@ -159,7 +159,7 @@ function attachProductEvents(): void {
 
 async function initAdmin(): Promise<void> {
   try {
-    const me = await AuthService.getMe(token!);
+    const me = await AuthService.getProfile(token!);
     currentUserRole = me.role;
     if (currentUserRole !== 'admin' && currentUserRole !== 'super_admin') {
       throw new Error('Forbidden');

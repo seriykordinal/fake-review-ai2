@@ -4,6 +4,8 @@ import (
 	"errors"
 	"time"
 
+	"fake-review-ai2/models"
+
 	"github.com/golang-jwt/jwt/v5"
 )
 
@@ -15,14 +17,8 @@ func NewJWTService(secretKey string) *JWTService {
 	return &JWTService{secretKey: []byte(secretKey)}
 }
 
-type Claims struct {
-	UserID int    `json:"user_id"`
-	Email  string `json:"email"`
-	jwt.RegisteredClaims
-}
-
 func (s *JWTService) GenerateToken(userID int, email string) (string, error) {
-	claims := Claims{
+	claims := models.Claims{
 		UserID: userID,
 		Email:  email,
 		RegisteredClaims: jwt.RegisteredClaims{
@@ -34,8 +30,8 @@ func (s *JWTService) GenerateToken(userID int, email string) (string, error) {
 	return token.SignedString(s.secretKey)
 }
 
-func (s *JWTService) ValidateToken(tokenString string) (*Claims, error) {
-	token, err := jwt.ParseWithClaims(tokenString, &Claims{}, func(t *jwt.Token) (interface{}, error) {
+func (s *JWTService) ValidateToken(tokenString string) (*models.Claims, error) {
+	token, err := jwt.ParseWithClaims(tokenString, &models.Claims{}, func(t *jwt.Token) (interface{}, error) {
 		if _, ok := t.Method.(*jwt.SigningMethodHMAC); !ok {
 			return nil, errors.New("unexpected signing method")
 		}
@@ -44,7 +40,7 @@ func (s *JWTService) ValidateToken(tokenString string) (*Claims, error) {
 	if err != nil {
 		return nil, err
 	}
-	if claims, ok := token.Claims.(*Claims); ok && token.Valid {
+	if claims, ok := token.Claims.(*models.Claims); ok && token.Valid {
 		return claims, nil
 	}
 	return nil, errors.New("invalid token")

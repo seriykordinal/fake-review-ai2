@@ -34,7 +34,7 @@ func (h *AnalysisHandler) AnalyzeReview(w http.ResponseWriter, r *http.Request) 
 }
 
 func (h *AnalysisHandler) AnalyzeProduct(w http.ResponseWriter, r *http.Request) {
-	claims := r.Context().Value(middleware.UserContextKey).(*services.Claims)
+	claims := r.Context().Value(middleware.UserContextKey).(*models.Claims)
 
 	var req models.ProductAnalysisRequest
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
@@ -101,7 +101,7 @@ func (h *AnalysisHandler) AnalyzeProduct(w http.ResponseWriter, r *http.Request)
 }
 
 func (h *AnalysisHandler) GetHistory(w http.ResponseWriter, r *http.Request) {
-	claims := r.Context().Value(middleware.UserContextKey).(*services.Claims)
+	claims := r.Context().Value(middleware.UserContextKey).(*models.Claims)
 	analyses, err := database.GetUserProductAnalyses(claims.UserID)
 	if err != nil {
 		writeJSONError(w, "Failed to get history: "+err.Error(), http.StatusInternalServerError)

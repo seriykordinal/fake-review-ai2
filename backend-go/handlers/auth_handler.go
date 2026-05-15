@@ -85,7 +85,7 @@ func (h *AuthHandler) Login(w http.ResponseWriter, r *http.Request) {
 // Profile возвращает полные данные профиля: id, email, role, created_at.
 // Используется как на главной странице, так и в админ-панели.
 func (h *AuthHandler) Profile(w http.ResponseWriter, r *http.Request) {
-	claims := r.Context().Value(middleware.UserContextKey).(*services.Claims)
+	claims := r.Context().Value(middleware.UserContextKey).(*models.Claims)
 	user, err := database.FindUserByEmail(claims.Email)
 	if err != nil || user == nil {
 		writeJSONError(w, "User not found", http.StatusNotFound)
@@ -100,7 +100,7 @@ func (h *AuthHandler) Profile(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *AuthHandler) DeleteAccount(w http.ResponseWriter, r *http.Request) {
-	claims := r.Context().Value(middleware.UserContextKey).(*services.Claims)
+	claims := r.Context().Value(middleware.UserContextKey).(*models.Claims)
 	if err := database.DeleteUser(claims.UserID); err != nil {
 		writeJSONError(w, "Failed to delete account: "+err.Error(), http.StatusInternalServerError)
 		return

@@ -29,14 +29,12 @@ func main() {
 	}
 	defer database.DB.Close()
 
-	// При старте сервера удаляем всех неверифицированных пользователей
 	if err := database.DeleteUnverifiedUsers(); err != nil {
 		log.Printf("Initial cleanup error: %v", err)
 	} else {
 		log.Println("Initial cleanup of unverified users completed")
 	}
 
-	// Запускаем периодическую очистку каждые 10 минут
 	go func() {
 		ticker := time.NewTicker(10 * time.Minute)
 		for range ticker.C {
@@ -52,7 +50,6 @@ func main() {
 	mime.AddExtensionType(".js", "application/javascript")
 	mime.AddExtensionType(".css", "text/css")
 
-	// Инициализация сервисов
 	emailService := services.NewEmailService()
 	jwtService := services.NewJWTService(cfg.JWT.Secret)
 	authService := services.NewAuthService(emailService, jwtService, cfg.EmailVerificationEnabled)
@@ -62,28 +59,21 @@ func main() {
 	analysisHandler := handlers.NewAnalysisHandler(analysisService)
 	adminHandler := handlers.NewAdminHandler()
 
-	// Создаём роутер mux
 	router := mux.NewRouter()
 
-	// Статические файлы
 	router.PathPrefix("/static/").Handler(http.StripPrefix("/static/", http.FileServer(http.Dir(frontendPath))))
 	router.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		http.ServeFile(w, r, filepath.Join(frontendPath, "index.html"))
 	})
 
-	// Публичные маршруты
 	router.HandleFunc("/api/register", authHandler.Register).Methods("POST")
 	router.HandleFunc("/api/verify", authHandler.Verify).Methods("POST")
 	router.HandleFunc("/api/login", authHandler.Login).Methods("POST")
 	router.HandleFunc("/api/analyze", analysisHandler.AnalyzeReview).Methods("POST")
 	router.HandleFunc("/admin.html", func(w http.ResponseWriter, r *http.Request) {
-		// Проверяем токен, роль, иначе 403
-		// Но проще: пусть admin.js сам проверит и редиректнёт, но для безопасности можно и на бэке.
-		// Ограничимся фронтенд-проверкой, т.к. API защищены.
 		http.ServeFile(w, r, filepath.Join(frontendPath, "admin.html"))
 	})
 
-	// Защищённые маршруты (требуют JWT)
 	protected := router.PathPrefix("/api").Subrouter()
 	protected.Use(middleware.AuthMiddleware(jwtService))
 	protected.HandleFunc("/profile", authHandler.Profile).Methods("GET")
@@ -91,7 +81,6 @@ func main() {
 	protected.HandleFunc("/account", authHandler.DeleteAccount).Methods("DELETE")
 	protected.HandleFunc("/history", analysisHandler.GetHistory).Methods("GET")
 
-	// Админские маршруты (требуют JWT + роли admin/super_admin)
 	admin := router.PathPrefix("/admin").Subrouter()
 	admin.Use(middleware.AuthMiddleware(jwtService))
 	admin.Use(middleware.RequireRole("admin", "super_admin"))
@@ -101,7 +90,6 @@ func main() {
 	admin.HandleFunc("/products/{id:[0-9]+}", adminHandler.DeleteProductAnalysis).Methods("DELETE")
 	admin.HandleFunc("/stats", adminHandler.GetStats).Methods("GET")
 
-	// Только super_admin может менять роли
 	superAdmin := router.PathPrefix("/admin").Subrouter()
 	superAdmin.Use(middleware.AuthMiddleware(jwtService))
 	superAdmin.Use(middleware.RequireRole("super_admin"))

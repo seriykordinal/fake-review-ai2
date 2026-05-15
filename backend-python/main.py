@@ -1,4 +1,3 @@
-
 import os
 import pickle
 import logging
@@ -27,7 +26,7 @@ def load_artifacts():
                 f"Файл не найден: {path}\n"
                 "Запустите сначала: python train.py"
             )
-    from tensorflow.keras.models import load_model
+    from keras.models import load_model
     _model = load_model(MODEL_PATH)
     with open(TFIDF_PATH, "rb") as f:
         _tfidf = pickle.load(f)

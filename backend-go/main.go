@@ -54,9 +54,10 @@ func main() {
 	jwtService := services.NewJWTService(cfg.JWT.Secret)
 	authService := services.NewAuthService(emailService, jwtService, cfg.EmailVerificationEnabled)
 	analysisService := services.NewAnalysisService(cfg.PythonServer.Host, cfg.PythonServer.Port)
+	wbParserService := services.NewWBParserService()
 
 	authHandler := handlers.NewAuthHandler(authService)
-	analysisHandler := handlers.NewAnalysisHandler(analysisService)
+	analysisHandler := handlers.NewAnalysisHandler(analysisService, wbParserService)
 	adminHandler := handlers.NewAdminHandler()
 
 	router := mux.NewRouter()
@@ -86,7 +87,7 @@ func main() {
 	admin.Use(middleware.RequireRole("admin", "super_admin"))
 	admin.HandleFunc("/users", adminHandler.ListUsers).Methods("GET")
 	admin.HandleFunc("/users/{id:[0-9]+}", adminHandler.DeleteUser).Methods("DELETE")
-	admin.HandleFunc("/products", adminHandler.ListProductAnalyses).Methods("GET")
+	admin.HandleFunc("/products", adminHandler.ListProductAnalysis).Methods("GET")
 	admin.HandleFunc("/products/{id:[0-9]+}", adminHandler.DeleteProductAnalysis).Methods("DELETE")
 	admin.HandleFunc("/stats", adminHandler.GetStats).Methods("GET")
 

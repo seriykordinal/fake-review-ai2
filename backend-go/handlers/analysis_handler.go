@@ -13,10 +13,11 @@ import (
 
 type AnalysisHandler struct {
 	analysisService *services.AnalysisService
+	wbParserService *services.WBParserService
 }
 
-func NewAnalysisHandler(analysisService *services.AnalysisService) *AnalysisHandler {
-	return &AnalysisHandler{analysisService: analysisService}
+func NewAnalysisHandler(analysisService *services.AnalysisService, wbParserService *services.WBParserService) *AnalysisHandler {
+	return &AnalysisHandler{analysisService: analysisService, wbParserService: wbParserService}
 }
 
 func (h *AnalysisHandler) AnalyzeReview(w http.ResponseWriter, r *http.Request) {
@@ -42,7 +43,7 @@ func (h *AnalysisHandler) AnalyzeProduct(w http.ResponseWriter, r *http.Request)
 		return
 	}
 
-	productID, err := services.ExtractProductID(req.ProductURL)
+	productID, err := h.wbParserService.ExtractProductID(req.ProductURL)
 	if err != nil {
 		writeJSONError(w, "Invalid product URL", http.StatusBadRequest)
 		return
@@ -56,7 +57,7 @@ func (h *AnalysisHandler) AnalyzeProduct(w http.ResponseWriter, r *http.Request)
 	}
 
 	// Парсим отзывы
-	reviews, err := services.FetchProductReviewsChromedp(productID, 5)
+	reviews, err := h.wbParserService.FetchProductReviewsChromedp(productID)
 	if err != nil {
 		writeJSONError(w, "Failed to parse reviews: "+err.Error(), http.StatusInternalServerError)
 		return

@@ -36,7 +36,7 @@ func (h *AdminHandler) DeleteUser(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusNoContent)
 }
 
-func (h *AdminHandler) ListProductAnalyses(w http.ResponseWriter, r *http.Request) {
+func (h *AdminHandler) ListProductAnalysis(w http.ResponseWriter, r *http.Request) {
 	analyses, err := database.GetAllProductAnalyses()
 	if err != nil {
 		writeJSONError(w, err.Error(), http.StatusInternalServerError)

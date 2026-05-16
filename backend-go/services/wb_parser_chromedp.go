@@ -14,7 +14,13 @@ import (
 	"github.com/chromedp/chromedp"
 )
 
-func ExtractProductID(url string) (int, error) {
+type WBParserService struct{}
+
+func NewWBParserService() *WBParserService {
+	return &WBParserService{}
+}
+
+func (s *WBParserService) ExtractProductID(url string) (int, error) {
 	re := regexp.MustCompile(`/catalog/(\d+)/`)
 	match := re.FindStringSubmatch(url)
 	if len(match) < 2 {
@@ -76,7 +82,7 @@ func countReviews(ctx context.Context) int {
 //  3. Ждём появления первых отзывов в DOM
 //  4. Плавно скроллим к триггеру .product-feedbacks__load пока счётчик растёт
 //  5. Парсим отзывы покупателей, исключая ответы продавца
-func FetchProductReviewsChromedp(productID int, maxPages int) ([]models.Review, error) {
+func (s *WBParserService) FetchProductReviewsChromedp(productID int) ([]models.Review, error) {
 	productURL := fmt.Sprintf("https://www.wildberries.ru/catalog/%d/detail.aspx", productID)
 
 	chromePath := `C:\Program Files\Google\Chrome\Application\chrome.exe`

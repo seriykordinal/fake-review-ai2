@@ -4,7 +4,11 @@ import (
 	"log"
 )
 
-type EmailService struct{}
+type EmailService struct {
+	smtpHost string
+	from     string
+	password string
+}
 
 func NewEmailService() *EmailService {
 	return &EmailService{}

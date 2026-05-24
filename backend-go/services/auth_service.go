@@ -34,7 +34,7 @@ func generateCode() (string, error) {
 }
 
 func (a *AuthService) Register(email, password string) (string, error) {
-	existing, _ := database.FindUserByEmail(email)
+	existing, _ := database.Global.FindUserByEmail(email)
 	if existing != nil && existing.IsVerified {
 		return "", errors.New("user already exists")
 	}
@@ -45,10 +45,10 @@ func (a *AuthService) Register(email, password string) (string, error) {
 	}
 
 	if !a.verificationEnabled {
-		if err := database.InsertUserVerified(email, string(hash)); err != nil {
+		if err := database.Global.InsertUserVerified(email, string(hash)); err != nil {
 			return "", err
 		}
-		user, err := database.FindUserByEmail(email)
+		user, err := database.Global.FindUserByEmail(email)
 		if err != nil || user == nil {
 			return "", errors.New("failed to retrieve user after registration")
 		}
@@ -62,9 +62,9 @@ func (a *AuthService) Register(email, password string) (string, error) {
 	expiresAt := time.Now().Add(10 * time.Minute)
 
 	if existing == nil {
-		err = database.InsertUser(email, string(hash), code, expiresAt)
+		err = database.Global.InsertUser(email, string(hash), code, expiresAt)
 	} else {
-		err = database.UpdateVerificationCode(email, code, expiresAt)
+		err = database.Global.UpdateVerificationCode(email, code, expiresAt)
 	}
 	if err != nil {
 		return "", err
@@ -80,7 +80,7 @@ func (a *AuthService) Verify(email, code string) (string, error) {
 	if !a.verificationEnabled {
 		return "", errors.New("verification is disabled")
 	}
-	user, err := database.FindUserByEmail(email)
+	user, err := database.Global.FindUserByEmail(email)
 	if err != nil {
 		return "", err
 	}
@@ -96,14 +96,14 @@ func (a *AuthService) Verify(email, code string) (string, error) {
 	if time.Now().After(user.CodeExpiresAt) {
 		return "", errors.New("code expired")
 	}
-	if err := database.VerifyUser(email); err != nil {
+	if err := database.Global.VerifyUser(email); err != nil {
 		return "", err
 	}
 	return a.jwtService.GenerateToken(user.ID, user.Email)
 }
 
 func (a *AuthService) Login(email, password string) (string, error) {
-	user, err := database.FindUserByEmail(email)
+	user, err := database.Global.FindUserByEmail(email)
 	if err != nil {
 		return "", err
 	}

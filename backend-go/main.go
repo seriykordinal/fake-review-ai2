@@ -27,9 +27,9 @@ func main() {
 	if err := database.Init(cfg); err != nil {
 		log.Fatal(err)
 	}
-	defer database.DB.Close()
+	defer database.Close()
 
-	if err := database.DeleteUnverifiedUsers(); err != nil {
+	if err := database.Global.DeleteUnverifiedUsers(); err != nil {
 		log.Printf("Initial cleanup error: %v", err)
 	} else {
 		log.Println("Initial cleanup of unverified users completed")
@@ -38,7 +38,7 @@ func main() {
 	go func() {
 		ticker := time.NewTicker(10 * time.Minute)
 		for range ticker.C {
-			if err := database.DeleteUnverifiedUsers(); err != nil {
+			if err := database.Global.DeleteUnverifiedUsers(); err != nil {
 				log.Printf("Scheduled cleanup error: %v", err)
 			} else {
 				log.Println("Scheduled cleanup of unverified users completed")
@@ -50,7 +50,7 @@ func main() {
 	mime.AddExtensionType(".js", "application/javascript")
 	mime.AddExtensionType(".css", "text/css")
 
-	emailService := services.NewEmailService()
+	emailService := services.NewEmailService(cfg)
 	jwtService := services.NewJWTService(cfg.JWT.Secret)
 	authService := services.NewAuthService(emailService, jwtService, cfg.EmailVerificationEnabled)
 	analysisService := services.NewAnalysisService(cfg.PythonServer.Host, cfg.PythonServer.Port)
@@ -58,7 +58,7 @@ func main() {
 
 	authHandler := handlers.NewAuthHandler(authService)
 	analysisHandler := handlers.NewAnalysisHandler(analysisService, wbParserService)
-	adminHandler := handlers.NewAdminHandler()
+	adminHandler := handlers.NewAdminHandler(emailService)
 
 	router := mux.NewRouter()
 

@@ -7,6 +7,7 @@ import (
 	"fake-review-ai2/models"
 	"fake-review-ai2/services"
 	"net/http"
+	"regexp"
 )
 
 type AuthHandler struct {
@@ -15,6 +16,13 @@ type AuthHandler struct {
 
 func NewAuthHandler(authService *services.AuthService) *AuthHandler {
 	return &AuthHandler{authService: authService}
+}
+
+// Валидация email: локальная_часть @ домен . TLD (минимум 2 символа)
+var emailRegex = regexp.MustCompile(`^[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}$`)
+
+func isValidEmail(email string) bool {
+	return emailRegex.MatchString(email)
 }
 
 func writeJSONError(w http.ResponseWriter, msg string, status int) {
@@ -36,6 +44,10 @@ func (h *AuthHandler) Register(w http.ResponseWriter, r *http.Request) {
 	}
 	if req.Email == "" || req.Password == "" {
 		writeJSONError(w, "Email and password required", http.StatusBadRequest)
+		return
+	}
+	if !isValidEmail(req.Email) {
+		writeJSONError(w, "Invalid email format", http.StatusBadRequest)
 		return
 	}
 	token, err := h.authService.Register(req.Email, req.Password)
@@ -60,6 +72,10 @@ func (h *AuthHandler) Verify(w http.ResponseWriter, r *http.Request) {
 		writeJSONError(w, "Email and code required", http.StatusBadRequest)
 		return
 	}
+	if !isValidEmail(req.Email) {
+		writeJSONError(w, "Invalid email format", http.StatusBadRequest)
+		return
+	}
 	token, err := h.authService.Verify(req.Email, req.Code)
 	if err != nil {
 		writeJSONError(w, err.Error(), http.StatusBadRequest)
@@ -74,6 +90,14 @@ func (h *AuthHandler) Login(w http.ResponseWriter, r *http.Request) {
 		writeJSONError(w, "Invalid JSON", http.StatusBadRequest)
 		return
 	}
+	if req.Email == "" || req.Password == "" {
+		writeJSONError(w, "Email and password required", http.StatusBadRequest)
+		return
+	}
+	if !isValidEmail(req.Email) {
+		writeJSONError(w, "Invalid email format", http.StatusBadRequest)
+		return
+	}
 	token, err := h.authService.Login(req.Email, req.Password)
 	if err != nil {
 		writeJSONError(w, err.Error(), http.StatusUnauthorized)
@@ -83,10 +107,9 @@ func (h *AuthHandler) Login(w http.ResponseWriter, r *http.Request) {
 }
 
 // Profile возвращает полные данные профиля: id, email, role, created_at.
-// Используется как на главной странице, так и в админ-панели.
 func (h *AuthHandler) Profile(w http.ResponseWriter, r *http.Request) {
 	claims := r.Context().Value(middleware.UserContextKey).(*models.Claims)
-	user, err := database.FindUserByEmail(claims.Email)
+	user, err := database.Global.FindUserByEmail(claims.Email)
 	if err != nil || user == nil {
 		writeJSONError(w, "User not found", http.StatusNotFound)
 		return
@@ -101,7 +124,7 @@ func (h *AuthHandler) Profile(w http.ResponseWriter, r *http.Request) {
 
 func (h *AuthHandler) DeleteAccount(w http.ResponseWriter, r *http.Request) {
 	claims := r.Context().Value(middleware.UserContextKey).(*models.Claims)
-	if err := database.DeleteUser(claims.UserID); err != nil {
+	if err := database.Global.DeleteUser(claims.UserID); err != nil {
 		writeJSONError(w, "Failed to delete account: "+err.Error(), http.StatusInternalServerError)
 		return
 	}

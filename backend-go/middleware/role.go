@@ -18,7 +18,7 @@ func RequireRole(allowedRoles ...string) func(http.Handler) http.Handler {
 				writeJSONError(w, "Unauthorized", http.StatusUnauthorized)
 				return
 			}
-			user, err := database.FindUserByEmail(claims.Email)
+			user, err := database.Global.FindUserByEmail(claims.Email)
 			if err != nil || user == nil {
 				writeJSONError(w, "User not found", http.StatusUnauthorized)
 				return

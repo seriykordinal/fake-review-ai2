@@ -14,6 +14,12 @@ function initials(email: string): string {
     return email ? email[0].toUpperCase() : '?';
 }
 
+// Валидация email
+const EMAIL_RE = /^[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}$/;
+function isValidEmail(email: string): boolean {
+    return EMAIL_RE.test(email);
+}
+
 // WB даты приходят как ISO или как русский текст ("14 мая 2024") — оба варианта показываем нормально
 function formatDate(s: string): string {
     if (!s) return '';
@@ -151,6 +157,12 @@ qs('doLoginBtn').addEventListener('click', async () => {
     const email    = qs<HTMLInputElement>('loginEmail').value.trim();
     const password = qs<HTMLInputElement>('loginPassword').value;
     clearError('loginError');
+    if (!isValidEmail(email)) {
+        const errEl = qs('loginError');
+        errEl.textContent = 'Введите корректный email';
+        errEl.classList.remove('hidden');
+        return;
+    }
     try {
         const res = await AuthService.login(email, password);
         token = res.token;
@@ -174,6 +186,12 @@ qs('doRegisterBtn').addEventListener('click', async () => {
     const email    = qs<HTMLInputElement>('regEmail').value.trim();
     const password = qs<HTMLInputElement>('regPassword').value;
     clearError('regError');
+    if (!isValidEmail(email)) {
+        const errEl = qs('regError');
+        errEl.textContent = 'Введите корректный email';
+        errEl.classList.remove('hidden');
+        return;
+    }
     try {
         const data = await AuthService.register(email, password);
         if (data.token) {

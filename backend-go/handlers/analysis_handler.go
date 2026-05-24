@@ -87,12 +87,12 @@ func (h *AnalysisHandler) AnalyzeProduct(w http.ResponseWriter, r *http.Request)
 	}
 
 	// Сохраняем в БД
-	analysisID, err := database.SaveProductAnalysis(claims.UserID, req.ProductURL, productID, len(reviews))
+	analysisID, err := database.Global.SaveProductAnalysis(claims.UserID, req.ProductURL, productID, len(reviews))
 	if err != nil {
 		log.Printf("Warning: failed to save product analysis: %v", err)
 	} else {
 		for _, rev := range reviews {
-			if err := database.SaveReviewAnalysis(analysisID, rev, rev.FakeProbability); err != nil {
+			if err := database.Global.SaveReviewAnalysis(analysisID, rev, rev.FakeProbability); err != nil {
 				log.Printf("Warning: failed to save review: %v", err)
 			}
 		}
@@ -103,19 +103,19 @@ func (h *AnalysisHandler) AnalyzeProduct(w http.ResponseWriter, r *http.Request)
 
 func (h *AnalysisHandler) GetHistory(w http.ResponseWriter, r *http.Request) {
 	claims := r.Context().Value(middleware.UserContextKey).(*models.Claims)
-	analyses, err := database.GetUserProductAnalyses(claims.UserID)
+	analyses, err := database.Global.GetUserProductAnalyses(claims.UserID)
 	if err != nil {
 		writeJSONError(w, "Failed to get history: "+err.Error(), http.StatusInternalServerError)
 		return
 	}
 	if analyses == nil {
-		analyses = []database.ProductAnalysisSummary{}
+		analyses = []models.ProductAnalysisSummary{}
 	}
 	writeJSON(w, analyses)
 }
 
 func (h *AnalysisHandler) loadFromCache(productID int) *models.ProductAnalysisResponse {
-	_, totalReviews, cachedReviews, err := database.GetExistingProductAnalysisGlobal(productID)
+	_, totalReviews, cachedReviews, err := database.Global.GetExistingProductAnalysisGlobal(productID)
 	if err != nil || len(cachedReviews) == 0 {
 		return nil
 	}

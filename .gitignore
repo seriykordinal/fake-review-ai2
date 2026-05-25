@@ -1,26 +1,29 @@
 # ── Секреты ───────────────────────────────────────────────────────────────────
-# НИКОГДА не коммитить — содержит пароли и JWT-ключ
 settings.json
 
 # ── Go ────────────────────────────────────────────────────────────────────────
-# Скомпилированные бинарники
 backend-go/fake-review-ai2
 backend-go/fake-review-ai2.exe
 backend-go/*.exe
-
-# Кэш Go-инструментов
 backend-go/vendor/
 
-# ── Python ────────────────────────────────────────────────────────────────────
-# Обученные модели (большие бинарные файлы — генерируются через train.py)
+# ── Python — артефакты модели (генерируются через training/train.py) ──────────
+backend-python/artifacts/*.keras
+backend-python/artifacts/*.h5
+backend-python/artifacts/*.pkl
+backend-python/artifacts/*.png
+backend-python/artifacts/*.txt
+
+# Python — датасеты (генерируются через data/collect_reviews.py и label_dataset.py)
+backend-python/datasets/*.csv
+
+# Старые пути (на случай если структура не обновлена)
 backend-python/models/*.h5
 backend-python/models/*.pkl
 backend-python/models/*.keras
-
-# Датасет (скачивается через get_dataset.py)
 backend-python/dataset/*.csv
 
-# Стандартный Python-мусор
+# Python-мусор
 __pycache__/
 *.py[cod]
 *.pyo
@@ -31,8 +34,6 @@ env/
 
 # ── Node.js / TypeScript ──────────────────────────────────────────────────────
 node_modules/
-
-# Source maps — генерируются при компиляции TS
 static/**/*.js.map
 static/**/*.d.ts
 
@@ -44,10 +45,8 @@ static/**/*.d.ts
 .DS_Store
 Thumbs.db
 
-# ── Бэкапы (созданные в ходе разработки) ─────────────────────────────────────
+# ── Прочее ───────────────────────────────────────────────────────────────────
 static/*.bak
 static/**/*.bak
-
-# ── Логи ─────────────────────────────────────────────────────────────────────
 *.log
 logs/

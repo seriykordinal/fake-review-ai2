@@ -49,11 +49,17 @@ func (h *AnalysisHandler) AnalyzeProduct(w http.ResponseWriter, r *http.Request)
 		return
 	}
 
-	// Проверяем глобальный кэш
-	if cachedResp := h.loadFromCache(productID); cachedResp != nil {
-		log.Printf("Returning cached analysis for product %d", productID)
-		writeJSON(w, cachedResp)
-		return
+	// Флаг parse_only=true — только парсинг, без ML-анализа и сохранения в БД.
+	// Используется для сбора датасета когда Python-сервер не запущен.
+	parseOnly := r.URL.Query().Get("parse_only") == "true"
+
+	// Проверяем кэш (только если не parse_only)
+	if !parseOnly {
+		if cachedResp := h.loadFromCache(productID); cachedResp != nil {
+			log.Printf("Returning cached analysis for product %d", productID)
+			writeJSON(w, cachedResp)
+			return
+		}
 	}
 
 	// Парсим отзывы
@@ -67,7 +73,13 @@ func (h *AnalysisHandler) AnalyzeProduct(w http.ResponseWriter, r *http.Request)
 		return
 	}
 
-	// Batch-анализ
+	// Если parse_only — возвращаем сырые отзывы без анализа
+	if parseOnly {
+		writeJSON(w, buildResponse(productID, reviews))
+		return
+	}
+
+	// Batch-анализ через Python ML-сервис
 	texts := make([]string, len(reviews))
 	for i, rev := range reviews {
 		texts[i] = rev.Text
@@ -79,7 +91,6 @@ func (h *AnalysisHandler) AnalyzeProduct(w http.ResponseWriter, r *http.Request)
 		return
 	}
 
-	// Проставляем вероятности
 	for i := range reviews {
 		if i < len(probs) {
 			reviews[i].FakeProbability = probs[i]

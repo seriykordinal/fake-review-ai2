@@ -35,7 +35,7 @@ class FakeReviewPredictor:
             if not os.path.exists(path):
                 raise FileNotFoundError(f"{name} не найден: {path}\nЗапустите: python -m training.train")
 
-        from tensorflow.keras.models import load_model
+        from keras.models import load_model
         self.model = load_model(MODEL_PATH)
         with open(TOKENIZER_PATH, "rb") as f:
             self.tokenizer = pickle.load(f)

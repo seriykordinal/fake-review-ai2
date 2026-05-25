@@ -9,13 +9,13 @@
 ветки описана в Sequential-стиле для читаемости.
 """
 
-from tensorflow.keras.models import Model
-from tensorflow.keras.layers import (
+from keras.models import Model
+from keras.layers import (
     Input, Embedding, Conv1D, GlobalMaxPooling1D,
     Dense, Dropout, Concatenate, BatchNormalization,
 )
-from tensorflow.keras.optimizers import Adam
-from tensorflow.keras.losses import CategoricalCrossentropy
+from keras.optimizers import Adam
+from keras.losses import CategoricalCrossentropy
 
 from .tokenizer import VOCAB_SIZE, MAX_LENGTH
 

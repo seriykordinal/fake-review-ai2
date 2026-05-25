@@ -1,0 +1,29 @@
+#Список товаров Wildberries 
+
+#Одежда
+https://www.wildberries.ru/catalog/471177947/detail.aspx
+https://www.wildberries.ru/catalog/245070130/detail.aspx
+
+#Обувь
+https://www.wildberries.ru/catalog/229659946/detail.aspx
+https://www.wildberries.ru/catalog/65828833/detail.aspx
+
+#Электроника
+https://www.wildberries.ru/catalog/251344786/detail.aspx
+https://www.wildberries.ru/catalog/92306598/detail.aspx
+https://www.wildberries.ru/catalog/254589473/detail.aspx
+
+#Посдуа
+https://www.wildberries.ru/catalog/527638309/detail.aspx
+https://www.wildberries.ru/catalog/1011701906/detail.aspx 
+#2 отзыва
+
+#Мебель
+https://www.wildberries.ru/catalog/147935373/detail.aspx
+https://www.wildberries.ru/catalog/155871590/detail.aspx
+https://www.wildberries.ru/catalog/90612442/detail.aspx
+
+# Косметика
+https://www.wildberries.ru/catalog/165879171/detail.aspx
+https://www.wildberries.ru/catalog/332672322/detail.aspx
+

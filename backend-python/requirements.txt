@@ -14,3 +14,8 @@ matplotlib==3.9.2
 
 # HTTP для сбора датасета
 requests==2.32.3
+
+# Тесты
+pytest==9.0.3
+httpx==0.28.1
+pytest-asyncio==1.4.0

@@ -13,8 +13,8 @@ import pickle
 from typing import List, Tuple
 
 import numpy as np
-from tensorflow.keras.preprocessing.text import Tokenizer
-from tensorflow.keras.preprocessing.sequence import pad_sequences
+from keras.preprocessing import Tokenizer
+from keras.preprocessing.sequence import pad_sequences
 
 
 # Гиперпараметры токенизации

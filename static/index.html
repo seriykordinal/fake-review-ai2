@@ -65,7 +65,52 @@
                 <button id="analyzeBtn" class="btn-primary w-full">Проверить отзыв</button>
                 <div id="singleResult" class="inline-result hidden"></div>
             </div>
+
             <p class="screen-hint">Хотите анализировать целые товары? <button class="link-btn" id="hintLoginBtn">Войдите</button> или <button class="link-btn" id="hintRegBtn">зарегистрируйтесь</button></p>
+        </div>
+
+        <!-- Блок прозрачности — вне screen-inner для большей ширины -->
+        <div class="how-it-works">
+            <div class="hiw-heading">
+                <span class="hiw-badge">Как это работает</span>
+                <h2 class="hiw-title">На что ориентируется алгоритм</h2>
+                <p class="hiw-lead">Анализ совмещает нейронную сеть и набор текстовых признаков. Вот основные сигналы, которые влияют на результат:</p>
+            </div>
+            <div class="signals-grid">
+                <div class="signal-card">
+                    <div class="signal-num">01</div>
+                    <h3 class="signal-title">Похожесть на другие отзывы</h3>
+                    <p class="signal-desc">Фейки часто копируют друг друга. Алгоритм проверяет, насколько отзыв уникален среди остальных отзывов на товар.</p>
+                </div>
+                <div class="signal-card">
+                    <div class="signal-num">02</div>
+                    <h3 class="signal-title">Восторженный стиль</h3>
+                    <p class="signal-desc">Обилие превосходных степеней, восклицательных знаков и эмоционального давления — частый признак заказного отзыва.</p>
+                </div>
+                <div class="signal-card">
+                    <div class="signal-num">03</div>
+                    <h3 class="signal-title">Рекламные клише</h3>
+                    <p class="signal-desc">Фразы вроде «советую всем», «не пожалеете», «лучшая покупка» встречаются в фейках значительно чаще, чем в настоящих отзывах.</p>
+                </div>
+                <div class="signal-card">
+                    <div class="signal-num">04</div>
+                    <h3 class="signal-title">Отсутствие конкретики</h3>
+                    <p class="signal-desc">Настоящие покупатели описывают детали: размер, материал, срок доставки. Фейки обходятся общими словами.</p>
+                </div>
+                <div class="signal-card signal-card-wide">
+                    <div class="signal-num">05</div>
+                    <h3 class="signal-title">Языковые паттерны</h3>
+                    <p class="signal-desc">Нейронная сеть улавливает неочевидные закономерности в структуре текста, которые сложно описать явными правилами.</p>
+                </div>
+            </div>
+            <div class="hiw-footer">
+                <p class="hiw-footer-text">Результат — вероятность от 0 до 100%. Алгоритм не даёт стопроцентной гарантии и может ошибаться.</p>
+                <div class="scale-legend">
+                    <span class="scale-item"><span class="scale-dot dot-green"></span> До 40% — вероятно настоящий</span>
+                    <span class="scale-item"><span class="scale-dot dot-yellow"></span> 40–70% — сомнительный</span>
+                    <span class="scale-item"><span class="scale-dot dot-red"></span> Выше 70% — высокий риск фейка</span>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -82,6 +127,51 @@
                 </div>
             </div>
             <div id="productResults" class="results hidden"></div>
+
+        </div>
+
+        <!-- Блок прозрачности — вне screen-inner для большей ширины -->
+        <div class="how-it-works">
+            <div class="hiw-heading">
+                <span class="hiw-badge">Как это работает</span>
+                <h2 class="hiw-title">На что ориентируется алгоритм</h2>
+                <p class="hiw-lead">Анализ совмещает нейронную сеть и набор текстовых признаков. Вот основные сигналы, которые влияют на результат:</p>
+            </div>
+            <div class="signals-grid">
+                <div class="signal-card">
+                    <div class="signal-num">01</div>
+                    <h3 class="signal-title">Похожесть на другие отзывы</h3>
+                    <p class="signal-desc">Фейки часто копируют друг друга. Алгоритм проверяет, насколько отзыв уникален среди остальных отзывов на товар.</p>
+                </div>
+                <div class="signal-card">
+                    <div class="signal-num">02</div>
+                    <h3 class="signal-title">Восторженный стиль</h3>
+                    <p class="signal-desc">Обилие превосходных степеней, восклицательных знаков и эмоционального давления — частый признак заказного отзыва.</p>
+                </div>
+                <div class="signal-card">
+                    <div class="signal-num">03</div>
+                    <h3 class="signal-title">Рекламные клише</h3>
+                    <p class="signal-desc">Фразы вроде «советую всем», «не пожалеете», «лучшая покупка» встречаются в фейках значительно чаще, чем в настоящих отзывах.</p>
+                </div>
+                <div class="signal-card">
+                    <div class="signal-num">04</div>
+                    <h3 class="signal-title">Отсутствие конкретики</h3>
+                    <p class="signal-desc">Настоящие покупатели описывают детали: размер, материал, срок доставки. Фейки обходятся общими словами.</p>
+                </div>
+                <div class="signal-card signal-card-wide">
+                    <div class="signal-num">05</div>
+                    <h3 class="signal-title">Языковые паттерны</h3>
+                    <p class="signal-desc">Нейронная сеть улавливает неочевидные закономерности в структуре текста, которые сложно описать явными правилами.</p>
+                </div>
+            </div>
+            <div class="hiw-footer">
+                <p class="hiw-footer-text">Результат — вероятность от 0 до 100%. Алгоритм не даёт стопроцентной гарантии и может ошибаться.</p>
+                <div class="scale-legend">
+                    <span class="scale-item"><span class="scale-dot dot-green"></span> До 40% — вероятно настоящий</span>
+                    <span class="scale-item"><span class="scale-dot dot-yellow"></span> 40–70% — сомнительный</span>
+                    <span class="scale-item"><span class="scale-dot dot-red"></span> Выше 70% — высокий риск фейка</span>
+                </div>
+            </div>
         </div>
     </div>
 

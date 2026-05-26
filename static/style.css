@@ -596,3 +596,145 @@ textarea { resize: vertical; min-height: 100px; }
     .url-row .btn-primary { width: 100%; }
     .summary-banner { justify-content: center; }
 }
+
+
+/* ── Блок «Как работает алгоритм» ── */
+.how-it-works {
+    max-width: 760px;
+    margin: 2.5rem auto 0;
+    padding: 0 1rem;
+}
+
+.hiw-heading {
+    text-align: center;
+    margin-bottom: 1.5rem;
+}
+
+.hiw-badge {
+    display: inline-block;
+    font-size: .7rem;
+    font-weight: 700;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    color: var(--primary);
+    background: var(--primary-dim);
+    padding: .2rem .65rem;
+    border-radius: 99px;
+    margin-bottom: .6rem;
+}
+
+.hiw-title {
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: var(--text);
+    margin: 0 0 .4rem;
+    letter-spacing: -.3px;
+}
+
+.hiw-lead {
+    font-size: .875rem;
+    color: var(--text-2);
+    margin: 0;
+    line-height: 1.55;
+    max-width: 520px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.signals-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: .75rem;
+}
+
+.signal-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1.25rem;
+    box-shadow: var(--shadow-card);
+    text-align: left;
+    transition: border-color .15s, box-shadow .15s;
+}
+.signal-card:hover {
+    border-color: var(--border-h);
+    box-shadow: 0 2px 12px rgba(0,0,0,.08);
+}
+
+.signal-card-wide {
+    grid-column: 1 / -1;
+}
+
+.signal-num {
+    display: inline-block;
+    font-size: .7rem;
+    font-weight: 700;
+    color: var(--primary);
+    background: var(--primary-dim);
+    padding: .15rem .5rem;
+    border-radius: 6px;
+    margin-bottom: .6rem;
+    letter-spacing: .03em;
+}
+
+.signal-title {
+    font-size: .9rem;
+    font-weight: 700;
+    color: var(--text);
+    margin: 0 0 .3rem;
+}
+
+.signal-desc {
+    font-size: .82rem;
+    color: var(--text-2);
+    line-height: 1.55;
+    margin: 0;
+}
+
+.hiw-footer {
+    margin-top: 1.25rem;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1rem 1.25rem;
+    box-shadow: var(--shadow-card);
+}
+
+.hiw-footer-text {
+    font-size: .82rem;
+    color: var(--text-3);
+    line-height: 1.5;
+    margin: 0 0 .65rem;
+}
+
+.scale-legend {
+    display: flex;
+    gap: 1.25rem;
+    flex-wrap: wrap;
+}
+
+.scale-item {
+    display: flex;
+    align-items: center;
+    gap: .4rem;
+    font-size: .78rem;
+    font-weight: 600;
+    color: var(--text-2);
+}
+
+.scale-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+.scale-dot.dot-green  { background: var(--good); }
+.scale-dot.dot-yellow { background: var(--warn); }
+.scale-dot.dot-red    { background: var(--danger); }
+
+@media (max-width: 640px) {
+    .signals-grid { grid-template-columns: 1fr; }
+    .signal-card-wide { grid-column: auto; }
+    .scale-legend { flex-direction: column; gap: .4rem; }
+    .how-it-works { padding: 0 .5rem; }
+}

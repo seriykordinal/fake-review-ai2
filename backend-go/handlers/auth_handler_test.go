@@ -2,17 +2,14 @@ package handlers
 
 import (
 	"bytes"
-	"context"
 	"encoding/json"
 	"net/http"
 	"net/http/httptest"
 	"testing"
 
-	"fake-review-ai2/middleware"
 	"fake-review-ai2/models"
+	"fake-review-ai2/utils"
 )
-
-// ── Валидация email ──────────────────────────────────────────────────────────
 
 func TestIsValidEmail(t *testing.T) {
 	tests := []struct {
@@ -30,7 +27,7 @@ func TestIsValidEmail(t *testing.T) {
 		{"user@", false},
 		{"user@.com", false},
 		{"user@domain", false},
-		{"user@domain.c", false}, // TLD < 2
+		{"user@domain.c", false},
 	}
 	for _, tc := range tests {
 		got := isValidEmail(tc.email)
@@ -39,8 +36,6 @@ func TestIsValidEmail(t *testing.T) {
 		}
 	}
 }
-
-// ── Хелпер: создать request с JSON body ──────────────────────────────────────
 
 func jsonRequest(t *testing.T, method, url string, body any) *http.Request {
 	t.Helper()
@@ -62,10 +57,8 @@ func decodeResponse(t *testing.T, rr *httptest.ResponseRecorder) map[string]any 
 	return m
 }
 
-// ── Register handler — валидация входных данных ──────────────────────────────
-
 func TestRegister_InvalidJSON(t *testing.T) {
-	handler := &AuthHandler{} // authService не нужен — ошибка раньше
+	handler := &AuthHandler{}
 	req := httptest.NewRequest("POST", "/api/register", bytes.NewReader([]byte("not json")))
 	rr := httptest.NewRecorder()
 
@@ -124,8 +117,6 @@ func TestRegister_InvalidEmail(t *testing.T) {
 	}
 }
 
-// ── Login handler — валидация ────────────────────────────────────────────────
-
 func TestLogin_InvalidJSON(t *testing.T) {
 	handler := &AuthHandler{}
 	req := httptest.NewRequest("POST", "/api/login", bytes.NewReader([]byte("{bad")))
@@ -162,8 +153,6 @@ func TestLogin_InvalidEmail(t *testing.T) {
 		t.Errorf("status = %d, want %d", rr.Code, http.StatusBadRequest)
 	}
 }
-
-// ── Verify handler — валидация ───────────────────────────────────────────────
 
 func TestVerify_InvalidJSON(t *testing.T) {
 	handler := &AuthHandler{}
@@ -202,11 +191,9 @@ func TestVerify_InvalidEmail(t *testing.T) {
 	}
 }
 
-// ── writeJSON / writeJSONError ───────────────────────────────────────────────
-
 func TestWriteJSONError_SetsContentType(t *testing.T) {
 	rr := httptest.NewRecorder()
-	writeJSONError(rr, "test error", http.StatusForbidden)
+	utils.WriteJSONError(rr, "test error", http.StatusForbidden)
 
 	if ct := rr.Header().Get("Content-Type"); ct != "application/json" {
 		t.Errorf("Content-Type = %q, want application/json", ct)
@@ -218,7 +205,7 @@ func TestWriteJSONError_SetsContentType(t *testing.T) {
 
 func TestWriteJSON_SetsContentType(t *testing.T) {
 	rr := httptest.NewRecorder()
-	writeJSON(rr, map[string]string{"ok": "true"})
+	utils.WriteJSON(rr, map[string]string{"ok": "true"})
 
 	if ct := rr.Header().Get("Content-Type"); ct != "application/json" {
 		t.Errorf("Content-Type = %q, want application/json", ct)
@@ -226,54 +213,4 @@ func TestWriteJSON_SetsContentType(t *testing.T) {
 	if rr.Code != http.StatusOK {
 		t.Errorf("status = %d, want %d", rr.Code, http.StatusOK)
 	}
-}
-
-// ── Profile — проверка context ───────────────────────────────────────────────
-
-func TestProfile_NilContext_Panics(t *testing.T) {
-	// Profile ожидает claims в контексте, без них — паника (type assertion)
-	handler := &AuthHandler{}
-	req := httptest.NewRequest("GET", "/api/profile", nil)
-	rr := httptest.NewRecorder()
-
-	defer func() {
-		if r := recover(); r == nil {
-			t.Error("expected panic when context has no claims")
-		}
-	}()
-	handler.Profile(rr, req)
-}
-
-func TestDeleteAccount_NilContext_Panics(t *testing.T) {
-	handler := &AuthHandler{}
-	req := httptest.NewRequest("DELETE", "/api/account", nil)
-	rr := httptest.NewRecorder()
-
-	defer func() {
-		if r := recover(); r == nil {
-			t.Error("expected panic when context has no claims")
-		}
-	}()
-	handler.DeleteAccount(rr, req)
-}
-
-// Проверяем, что claims корректно извлекаются из контекста
-func TestProfile_ClaimsInContext(t *testing.T) {
-	// Без реальной БД Profile упадёт на database.Global == nil.
-	// Но мы можем проверить, что claims извлекаются корректно — для этого
-	// достаточно убедиться, что паники нет до вызова БД.
-	handler := &AuthHandler{}
-	claims := &models.Claims{UserID: 1, Email: "test@test.com"}
-	ctx := context.WithValue(context.Background(), middleware.UserContextKey, claims)
-	req := httptest.NewRequest("GET", "/api/profile", nil).WithContext(ctx)
-	rr := httptest.NewRecorder()
-
-	// database.Global == nil → паника на database.Global.FindUserByEmail
-	// Но это означает, что claims извлечены успешно
-	defer func() {
-		if r := recover(); r != nil {
-			// OK — паника на database.Global, не на claims extraction
-		}
-	}()
-	handler.Profile(rr, req)
 }

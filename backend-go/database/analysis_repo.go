@@ -77,7 +77,7 @@ func (s *Store) GetExistingProductAnalysisGlobal(productID int) (analysisID int,
 	return analysisID, totalReviews, reviews, nil
 }
 
-func (s *Store) GetAllProductAnalyses() ([]models.ProductAnalysisSummary, error) {
+func (s *Store) GetAllProductAnalysis() ([]models.ProductAnalysisSummary, error) {
 	rows, err := s.DB.Query(`
         SELECT pa.id, pa.user_id, u.email, pa.product_id, pa.product_url, pa.total_reviews, pa.analyzed_at
         FROM product_analysis pa
@@ -112,7 +112,7 @@ func (s *Store) GetProductAnalysisByID(analysisID int) (*models.ProductAnalysisS
 	return &a, nil
 }
 
-func (s *Store) GetUserProductAnalyses(userID int) ([]models.ProductAnalysisSummary, error) {
+func (s *Store) GetUserProductAnalysis(userID int) ([]models.ProductAnalysisSummary, error) {
 	rows, err := s.DB.Query(`
         SELECT pa.id, pa.user_id, u.email, pa.product_id, pa.product_url, pa.total_reviews, pa.analyzed_at
         FROM product_analysis pa

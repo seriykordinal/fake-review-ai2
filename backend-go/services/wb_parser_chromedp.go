@@ -29,8 +29,7 @@ func (s *WBParserService) ExtractProductID(url string) (int, error) {
 	return strconv.Atoi(match[1])
 }
 
-// jitter добавляет небольшой случайный разброс к паузе
-func jitter(base, spread time.Duration) time.Duration {
+func RandomPause(base, spread time.Duration) time.Duration {
 	return base + time.Duration(rand.Int63n(int64(spread)))
 }
 
@@ -98,7 +97,7 @@ func (s *WBParserService) FetchProductReviewsChromedp(productID int) ([]models.R
 	if !waitForSelector(ctx, ".product-page", 20*time.Second) {
 		return nil, fmt.Errorf("product page not loaded (%d)", productID)
 	}
-	time.Sleep(jitter(1*time.Second, 500*time.Millisecond))
+	time.Sleep(RandomPause(1*time.Second, 500*time.Millisecond))
 
 	// ── 2. Переходим на страницу отзывов ─────────────────────────────────
 	feedbacksURL := fmt.Sprintf("https://www.wildberries.ru/catalog/%d/feedbacks", productID)
@@ -122,7 +121,7 @@ func (s *WBParserService) FetchProductReviewsChromedp(productID int) ([]models.R
 	}
 
 	// Небольшая пауза — даём DOM устояться после первой загрузки
-	time.Sleep(jitter(800*time.Millisecond, 400*time.Millisecond))
+	time.Sleep(RandomPause(800*time.Millisecond, 400*time.Millisecond))
 
 	firstLoad := countReviews(ctx)
 	log.Printf("Первая загрузка: %d отзывов", firstLoad)
@@ -167,7 +166,7 @@ func (s *WBParserService) FetchProductReviewsChromedp(productID int) ([]models.R
 			}
 
 			// Короткая пауза между итерациями
-			time.Sleep(jitter(300*time.Millisecond, 200*time.Millisecond))
+			time.Sleep(RandomPause(300*time.Millisecond, 200*time.Millisecond))
 		}
 	}
 

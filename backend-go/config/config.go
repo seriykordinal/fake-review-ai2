@@ -60,7 +60,7 @@ func Load() (*Config, error) {
 	if !cfg.Debug {
 		log.SetOutput(io.Discard)
 	} else {
-		log.SetFlags(log.Ldate | log.Ltime | log.Lshortfile)
+		log.SetFlags(log.Ldate | log.Ltime)
 	}
 
 	return &cfg, nil

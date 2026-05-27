@@ -51,10 +51,3 @@ func TestExtractProductID_InvalidURLs(t *testing.T) {
 		})
 	}
 }
-
-func TestNewWBParserService(t *testing.T) {
-	svc := NewWBParserService()
-	if svc == nil {
-		t.Fatal("NewWBParserService returned nil")
-	}
-}

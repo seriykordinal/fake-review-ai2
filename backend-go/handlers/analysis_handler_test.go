@@ -2,15 +2,12 @@ package handlers
 
 import (
 	"bytes"
-	"math"
 	"net/http"
 	"net/http/httptest"
 	"testing"
 
 	"fake-review-ai2/models"
 )
-
-// ── AnalyzeReview handler — валидация ────────────────────────────────────────
 
 func TestAnalyzeReview_InvalidJSON(t *testing.T) {
 	handler := &AnalysisHandler{}
@@ -23,8 +20,6 @@ func TestAnalyzeReview_InvalidJSON(t *testing.T) {
 		t.Errorf("status = %d, want %d", rr.Code, http.StatusBadRequest)
 	}
 }
-
-// ── buildResponse ────────────────────────────────────────────────────────────
 
 func TestBuildResponse_Empty(t *testing.T) {
 	resp := buildResponse(12345, []models.Review{})
@@ -69,7 +64,7 @@ func TestBuildResponse_MultipleReviews(t *testing.T) {
 		t.Errorf("TotalReviews = %d, want 3", resp.TotalReviews)
 	}
 	expected := (0.2 + 0.6 + 0.4) / 3.0
-	if math.Abs(resp.AverageFakeProbability-expected) > 1e-10 {
+	if resp.AverageFakeProbability != expected {
 		t.Errorf("AverageFakeProbability = %f, want %f", resp.AverageFakeProbability, expected)
 	}
 }
@@ -103,22 +98,4 @@ func TestBuildResponse_AllFieldsPreserved(t *testing.T) {
 	if r.Date != "2024-01-01" {
 		t.Errorf("Date = %q", r.Date)
 	}
-}
-
-// ── AnalyzeProduct — валидация JSON ──────────────────────────────────────────
-
-func TestAnalyzeProduct_InvalidJSON(t *testing.T) {
-	handler := &AnalysisHandler{}
-	// Нужны claims в контексте, но мы проверяем ошибку JSON — паника на claims
-	// будет раньше. Для чистого теста JSON-валидации добавим claims:
-	req := httptest.NewRequest("POST", "/api/analyze_product", bytes.NewReader([]byte("{bad json")))
-	rr := httptest.NewRecorder()
-
-	// Без claims в контексте — паника
-	defer func() {
-		if r := recover(); r != nil {
-			// OK: паника из-за отсутствия claims — ожидаемо
-		}
-	}()
-	handler.AnalyzeProduct(rr, req)
 }

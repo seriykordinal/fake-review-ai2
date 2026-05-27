@@ -10,13 +10,10 @@ import (
 	_ "github.com/lib/pq"
 )
 
-// Store — центральная структура для работы с БД.
-// Все методы сгруппированы по таблицам в отдельных файлах.
 type Store struct {
 	DB *sql.DB
 }
 
-// Global — глобальный экземпляр, инициализируется при старте.
 var Global *Store
 
 func Init(cfg *config.Config) error {

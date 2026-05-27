@@ -101,7 +101,7 @@ func main() {
 		Addr:         addr,
 		Handler:      router,
 		ReadTimeout:  10 * time.Second,
-		WriteTimeout: 30 * time.Minute,
+		WriteTimeout: 8 * time.Minute,
 		IdleTimeout:  120 * time.Second,
 	}
 

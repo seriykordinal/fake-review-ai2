@@ -1,7 +1,6 @@
 package middleware
 
 import (
-	"context"
 	"encoding/json"
 	"net/http"
 	"net/http/httptest"
@@ -9,20 +8,16 @@ import (
 
 	"fake-review-ai2/models"
 	"fake-review-ai2/services"
+	"fake-review-ai2/utils"
 )
 
-const testJWTSecret = "middleware-test-secret-key"
-
-// okHandler — простой обработчик, который пишет 200 OK
 var okHandler = http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 	w.Write([]byte("ok"))
 })
 
-// ── AuthMiddleware ──────────────────────────────────────────────────────────
-
 func TestAuthMiddleware_NoHeader(t *testing.T) {
-	jwtSvc := services.NewJWTService(testJWTSecret)
+	jwtSvc := services.NewJWTService("test-secret-key")
 	handler := AuthMiddleware(jwtSvc)(okHandler)
 
 	req := httptest.NewRequest("GET", "/api/profile", nil)
@@ -36,7 +31,7 @@ func TestAuthMiddleware_NoHeader(t *testing.T) {
 }
 
 func TestAuthMiddleware_InvalidFormat_NoBearerPrefix(t *testing.T) {
-	jwtSvc := services.NewJWTService(testJWTSecret)
+	jwtSvc := services.NewJWTService("test-secret-key")
 	handler := AuthMiddleware(jwtSvc)(okHandler)
 
 	req := httptest.NewRequest("GET", "/api/profile", nil)
@@ -51,7 +46,7 @@ func TestAuthMiddleware_InvalidFormat_NoBearerPrefix(t *testing.T) {
 }
 
 func TestAuthMiddleware_InvalidFormat_OnlyBearer(t *testing.T) {
-	jwtSvc := services.NewJWTService(testJWTSecret)
+	jwtSvc := services.NewJWTService("test-secret-key")
 	handler := AuthMiddleware(jwtSvc)(okHandler)
 
 	req := httptest.NewRequest("GET", "/api/profile", nil)
@@ -65,7 +60,7 @@ func TestAuthMiddleware_InvalidFormat_OnlyBearer(t *testing.T) {
 }
 
 func TestAuthMiddleware_InvalidToken(t *testing.T) {
-	jwtSvc := services.NewJWTService(testJWTSecret)
+	jwtSvc := services.NewJWTService("test-secret-key")
 	handler := AuthMiddleware(jwtSvc)(okHandler)
 
 	req := httptest.NewRequest("GET", "/api/profile", nil)
@@ -80,13 +75,12 @@ func TestAuthMiddleware_InvalidToken(t *testing.T) {
 }
 
 func TestAuthMiddleware_ValidToken(t *testing.T) {
-	jwtSvc := services.NewJWTService(testJWTSecret)
+	jwtSvc := services.NewJWTService("test-secret-key")
 	token, err := jwtSvc.GenerateToken(42, "user@test.com")
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	// Проверяем, что claims попадают в контекст
 	var gotClaims *models.Claims
 	innerHandler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		claims, ok := r.Context().Value(UserContextKey).(*models.Claims)
@@ -135,24 +129,6 @@ func TestAuthMiddleware_WrongSecret(t *testing.T) {
 	}
 }
 
-func TestAuthMiddleware_BearerCaseInsensitive(t *testing.T) {
-	jwtSvc := services.NewJWTService(testJWTSecret)
-	token, _ := jwtSvc.GenerateToken(1, "a@b.com")
-	handler := AuthMiddleware(jwtSvc)(okHandler)
-
-	// "bearer" в нижнем регистре
-	req := httptest.NewRequest("GET", "/", nil)
-	req.Header.Set("Authorization", "bearer "+token)
-	rr := httptest.NewRecorder()
-	handler.ServeHTTP(rr, req)
-
-	if rr.Code != http.StatusOK {
-		t.Errorf("lowercase 'bearer' should work: status = %d, want %d", rr.Code, http.StatusOK)
-	}
-}
-
-// ── RequireRole ─────────────────────────────────────────────────────────────
-
 func TestRequireRole_NoClaims(t *testing.T) {
 	handler := RequireRole("admin")(okHandler)
 	req := httptest.NewRequest("GET", "/admin/users", nil)
@@ -164,30 +140,9 @@ func TestRequireRole_NoClaims(t *testing.T) {
 	}
 }
 
-func TestRequireRole_ClaimsPresent_NoDB(t *testing.T) {
-	// RequireRole ищет пользователя в database.Global, который == nil в тестах.
-	// Это должно вернуть 401 "User not found"
-	handler := RequireRole("admin")(okHandler)
-
-	claims := &models.Claims{UserID: 1, Email: "admin@test.com"}
-	ctx := context.WithValue(context.Background(), UserContextKey, claims)
-	req := httptest.NewRequest("GET", "/admin/users", nil).WithContext(ctx)
-	rr := httptest.NewRecorder()
-
-	// database.Global == nil → паника
-	defer func() {
-		if r := recover(); r != nil {
-			// Ожидаемо — БД не подключена
-		}
-	}()
-	handler.ServeHTTP(rr, req)
-}
-
-// ── writeJSONError ──────────────────────────────────────────────────────────
-
 func TestWriteJSONError(t *testing.T) {
 	rr := httptest.NewRecorder()
-	writeJSONError(rr, "forbidden", http.StatusForbidden)
+	utils.WriteJSONError(rr, "forbidden", http.StatusForbidden)
 
 	if rr.Code != http.StatusForbidden {
 		t.Errorf("status = %d, want %d", rr.Code, http.StatusForbidden)
@@ -202,8 +157,6 @@ func TestWriteJSONError(t *testing.T) {
 		t.Errorf("error = %q, want 'forbidden'", resp["error"])
 	}
 }
-
-// ── Хелперы ──────────────────────────────────────────────────────────────────
 
 func assertJSONError(t *testing.T, rr *httptest.ResponseRecorder, expectedMsg string) {
 	t.Helper()

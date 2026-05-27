@@ -80,7 +80,6 @@ func TestLoad_ValidJSON(t *testing.T) {
 		t.Error("Debug should be true")
 	}
 
-	// Global должен быть установлен
 	if Global == nil {
 		t.Fatal("Global config not set")
 	}

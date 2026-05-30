@@ -1,21 +1,15 @@
-# Веб-сервер
 fastapi==0.115.0
 uvicorn==0.32.0
 pydantic==2.9.2
+requests==2.32.3
 
-# ML и числовые вычисления
 tensorflow==2.18.0
 scikit-learn==1.5.2
 numpy==1.26.4
 pandas==2.2.3
 
-# Визуализация (для confusion matrix)
-matplotlib==3.9.2
-
-# HTTP для сбора датасета
-requests==2.32.3
-
-# Тесты
 pytest==9.0.3
 httpx==0.28.1
 pytest-asyncio==1.4.0
+
+matplotlib==3.9.2

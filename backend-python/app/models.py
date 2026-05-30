@@ -1,17 +1,13 @@
-"""Pydantic-схемы запросов и ответов FastAPI."""
-
 from typing import List, Optional
 from pydantic import BaseModel, Field
 
 
 class TextRequest(BaseModel):
-    """Запрос на анализ одного отзыва."""
     text: str = Field(..., min_length=1)
     rating: Optional[str] = Field(None)
 
 
 class TextBatchRequest(BaseModel):
-    """Пакетный запрос — Go отправляет {"texts": [...]}"""
     texts: List[str]
 
 

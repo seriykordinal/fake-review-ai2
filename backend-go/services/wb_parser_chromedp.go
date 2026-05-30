@@ -56,13 +56,6 @@ func waitForSelector(ctx context.Context, sel string, timeout time.Duration) boo
 	return false
 }
 
-// FetchProductReviewsChromedp собирает отзывы через headless Chrome.
-//
-// Логика прокрутки основана на поведении WB:
-//   - Первая загрузка: 30 отзывов + закреплённые (1–5 шт, без даты)
-//   - Каждая следующая подгрузка: от 0 до 30 отзывов
-//   - WB ограничивает выдачу ~1000 отзывами
-//   - Конец загрузки: последняя подгрузка принесла < 30 отзывов
 func (s *WBParserService) FetchProductReviewsChromedp(productID int) ([]models.Review, error) {
 	productURL := fmt.Sprintf("https://www.wildberries.ru/catalog/%d/detail.aspx", productID)
 	chromePath := `C:\Program Files\Google\Chrome\Application\chrome.exe`
@@ -84,12 +77,10 @@ func (s *WBParserService) FetchProductReviewsChromedp(productID int) ([]models.R
 	ctx, cancel = context.WithTimeout(ctx, 10*time.Minute)
 	defer cancel()
 
-	// Скрываем флаг автоматизации
 	chromedp.Run(ctx, chromedp.Evaluate(
 		`Object.defineProperty(navigator, 'webdriver', {get: () => undefined});`, nil,
 	))
 
-	// ── 1. Открываем страницу товара ─────────────────────────────────────
 	log.Printf("Открываем товар %d", productID)
 	if err := chromedp.Run(ctx, chromedp.Navigate(productURL)); err != nil {
 		return nil, fmt.Errorf("navigate product page: %w", err)
@@ -99,9 +90,7 @@ func (s *WBParserService) FetchProductReviewsChromedp(productID int) ([]models.R
 	}
 	time.Sleep(RandomPause(1*time.Second, 500*time.Millisecond))
 
-	// ── 2. Переходим на страницу отзывов ─────────────────────────────────
 	feedbacksURL := fmt.Sprintf("https://www.wildberries.ru/catalog/%d/feedbacks", productID)
-	// Пробуем найти ссылку прямо со страницы
 	var linkFromPage string
 	chromedp.Run(ctx, chromedp.Evaluate(`
 		(() => { let a = document.querySelector('a[href*="feedbacks"]'); return a ? a.href : ""; })()
@@ -115,29 +104,22 @@ func (s *WBParserService) FetchProductReviewsChromedp(productID int) ([]models.R
 		return nil, fmt.Errorf("navigate feedbacks: %w", err)
 	}
 
-	// ── 3. Ждём первую порцию отзывов (30 + закреплённые) ────────────────
 	if !waitForSelector(ctx, "li.comments__item.feedback", 25*time.Second) {
 		return nil, fmt.Errorf("no reviews on feedbacks page (%d)", productID)
 	}
 
-	// Небольшая пауза — даём DOM устояться после первой загрузки
 	time.Sleep(RandomPause(800*time.Millisecond, 400*time.Millisecond))
 
 	firstLoad := countReviews(ctx)
 	log.Printf("Первая загрузка: %d отзывов", firstLoad)
 
-	// Если первая порция < 30 — больше ничего не будет (маленький товар)
 	if firstLoad < 30 {
 		log.Printf("Товар имеет < 30 отзывов — прокрутка не нужна")
 	} else {
-		// ── 4. Цикл подгрузки ────────────────────────────────────────────
-		// Каждая итерация: скроллим к триггеру → ждём → смотрим прирост.
-		// Если прирост < 30 — это последняя порция, выходим.
-		// WB лимитирует ~1000 отзывов, поэтому цикл не может быть бесконечным.
+
 		for {
 			before := countReviews(ctx)
 
-			// Скроллим к триггеру подгрузки — instant быстрее smooth
 			chromedp.Run(ctx, chromedp.Evaluate(`
 				(() => {
 					let el = document.querySelector('.product-feedbacks__load');
@@ -145,7 +127,6 @@ func (s *WBParserService) FetchProductReviewsChromedp(productID int) ([]models.R
 				})()
 			`, nil))
 
-			// Ждём появления новых отзывов (до 10 секунд)
 			after := before
 			deadline := time.Now().Add(10 * time.Second)
 			for time.Now().Before(deadline) {
@@ -159,18 +140,15 @@ func (s *WBParserService) FetchProductReviewsChromedp(productID int) ([]models.R
 			added := after - before
 			log.Printf("Подгрузка: +%d отзывов (всего %d)", added, after)
 
-			// Пришло < 30 — это последняя порция (или пустая), конец
 			if added < 30 {
 				log.Printf("Последняя порция (%d шт.) — загрузка завершена", added)
 				break
 			}
 
-			// Короткая пауза между итерациями
 			time.Sleep(RandomPause(300*time.Millisecond, 200*time.Millisecond))
 		}
 	}
 
-	// ── 5. Парсим DOM ─────────────────────────────────────────────────────
 	log.Printf("Парсим %d отзывов...", countReviews(ctx))
 
 	var raw []map[string]string
@@ -181,7 +159,6 @@ func (s *WBParserService) FetchProductReviewsChromedp(productID int) ([]models.R
 			let result = [];
 
 			for (let item of items) {
-				// Рейтинг из CSS-класса star1-star5
 				let rating = "";
 				let starsEl = item.querySelector('.feedback__rating');
 				if (starsEl) {
@@ -189,13 +166,9 @@ func (s *WBParserService) FetchProductReviewsChromedp(productID int) ([]models.R
 					if (m) rating = m[1];
 				}
 
-				// Дата — только из блока покупателя (.feedback__info)
-				// Закреплённые отзывы даты не имеют — это нормально
 				let dateEl = item.querySelector('.feedback__info .feedback__date');
 				let date   = dateEl ? dateEl.innerText.trim() : "";
 
-				// Текст — p[itemprop="reviewBody"] есть только у отзыва покупателя,
-				// ответ продавца (.feedbackContainer) этого атрибута не имеет
 				let pros = "", cons = "", text = "";
 				let body = item.querySelector('p[itemprop="reviewBody"]');
 				if (body) {
@@ -212,7 +185,6 @@ func (s *WBParserService) FetchProductReviewsChromedp(productID int) ([]models.R
 					if (!pros && !cons && !text) text = body.innerText.trim();
 				}
 
-				// Тег-плюсы из feedbacks-bables (если pros пустой)
 				if (!pros) {
 					let bables = item.querySelector('.feedbacks-bables');
 					if (bables) {
@@ -224,7 +196,6 @@ func (s *WBParserService) FetchProductReviewsChromedp(productID int) ([]models.R
 
 				if (!text && !pros && !cons) continue;
 
-				// Дедупликация
 				let key = rating + "|" + date + "|" + text + "|" + pros + "|" + cons;
 				if (seen.has(key)) continue;
 				seen.add(key);

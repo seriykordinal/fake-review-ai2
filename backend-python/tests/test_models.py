@@ -1,14 +1,6 @@
-"""
-Тесты для app/schemas.py — Pydantic-модели запросов и ответов.
-
-Запуск:
-    cd backend-python
-    python -m pytest tests/test_schemas.py -v
-"""
-
 import pytest
 from pydantic import ValidationError
-from app.schemas import (
+from app.models import (
     TextRequest,
     TextBatchRequest,
     PredictionResponse,
@@ -16,8 +8,6 @@ from app.schemas import (
     HealthResponse,
 )
 
-
-# ── TextRequest ──────────────────────────────────────────────────────────────
 
 class TestTextRequest:
     def test_valid(self):
@@ -42,7 +32,6 @@ class TestTextRequest:
         assert req.rating is None
 
 
-# ── TextBatchRequest ─────────────────────────────────────────────────────────
 
 class TestTextBatchRequest:
     def test_valid(self):
@@ -58,7 +47,6 @@ class TestTextBatchRequest:
             TextBatchRequest()
 
 
-# ── PredictionResponse ───────────────────────────────────────────────────────
 
 class TestPredictionResponse:
     def test_valid(self):
@@ -82,8 +70,6 @@ class TestPredictionResponse:
             PredictionResponse(fake_probability=1.1)
 
 
-# ── BatchPredictionResponse ──────────────────────────────────────────────────
-
 class TestBatchPredictionResponse:
     def test_valid(self):
         resp = BatchPredictionResponse(probabilities=[0.1, 0.5, 0.9])
@@ -94,7 +80,6 @@ class TestBatchPredictionResponse:
         assert resp.probabilities == []
 
 
-# ── HealthResponse ───────────────────────────────────────────────────────────
 
 class TestHealthResponse:
     def test_ok(self):

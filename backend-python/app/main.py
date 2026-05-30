@@ -1,15 +1,3 @@
-"""
-FastAPI приложение FakeCheck ML.
-
-Эндпоинты:
-    GET  /health         — статус сервиса
-    POST /predict        — анализ одного отзыва
-    POST /predict_batch  — пакетный анализ ({"texts": [...]})
-
-Запуск:
-    uvicorn app.main:app --host 0.0.0.0 --port 8000
-"""
-
 import logging
 import sys
 import os
@@ -18,11 +6,12 @@ from fastapi import FastAPI, HTTPException
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from app.schemas import (
+from app.models import (
     TextRequest, TextBatchRequest,
     PredictionResponse, BatchPredictionResponse, HealthResponse,
 )
-from app.inference import predictor
+
+from app.predictor import predictor
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)

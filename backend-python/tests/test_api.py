@@ -1,42 +1,3 @@
-"""
-Тесты для app/main.py — FastAPI эндпоинты /health, /predict, /predict_batch.
-
-Запуск:
-    cd backend-python
-    python -m pytest tests/test_api.py -v
-"""
-
-import pytest
-from unittest.mock import patch, MagicMock
-from fastapi.testclient import TestClient
-
-
-# Мокаем predictor ДО импорта app, чтобы lifespan не пытался загрузить модель
-@pytest.fixture()
-def client():
-    with patch("app.main.predictor") as mock_pred:
-        mock_pred.is_loaded = True
-        mock_pred.predict_one.return_value = 0.75
-        mock_pred.predict_batch.return_value = [0.5, 0.6, 0.7]
-        mock_pred.load.return_value = None
-
-        from app.main import app
-        with TestClient(app) as c:
-            yield c, mock_pred
-
-
-@pytest.fixture()
-def client_model_not_loaded():
-    with patch("app.main.predictor") as mock_pred:
-        mock_pred.is_loaded = False
-        mock_pred.load.return_value = None
-
-        from app.main import app
-        with TestClient(app) as c:
-            yield c, mock_pred
-
-
-# ── /health ──────────────────────────────────────────────────────────────────
 
 class TestHealth:
     def test_health_loaded(self, client):
@@ -56,7 +17,6 @@ class TestHealth:
         assert data["model_loaded"] is False
 
 
-# ── /predict ─────────────────────────────────────────────────────────────────
 
 class TestPredict:
     def test_predict_success(self, client):
@@ -76,7 +36,7 @@ class TestPredict:
     def test_predict_empty_text_rejected(self, client):
         c, _ = client
         resp = c.post("/predict", json={"text": ""})
-        assert resp.status_code == 422  # Pydantic validation error
+        assert resp.status_code == 422  
 
     def test_predict_missing_text(self, client):
         c, _ = client
@@ -95,7 +55,6 @@ class TestPredict:
         assert resp.status_code == 503
 
 
-# ── /predict_batch ───────────────────────────────────────────────────────────
 
 class TestPredictBatch:
     def test_batch_success(self, client):

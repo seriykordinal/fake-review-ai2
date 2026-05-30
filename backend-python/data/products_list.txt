@@ -1,29 +1,172 @@
 #Список товаров Wildberries 
 
-#Одежда
-https://www.wildberries.ru/catalog/471177947/detail.aspx
-https://www.wildberries.ru/catalog/245070130/detail.aspx
+#Benetti Кожаные полуботинки на шнуровке
+https://www.wildberries.ru/catalog/312749687/detail.aspx?size=472701572
 
-#Обувь
-https://www.wildberries.ru/catalog/229659946/detail.aspx
-https://www.wildberries.ru/catalog/65828833/detail.aspx
+#Pasabahce Набор стеклянных стаканов для виски и сока 355 мл 2 шт
+https://www.wildberries.ru/catalog/198441833/detail.aspx?size=321515616
 
-#Электроника
-https://www.wildberries.ru/catalog/251344786/detail.aspx
-https://www.wildberries.ru/catalog/92306598/detail.aspx
-https://www.wildberries.ru/catalog/254589473/detail.aspx
+#Smile of Mister Тапочки домашние
+https://www.wildberries.ru/catalog/323214644/detail.aspx?size=485994082
 
-#Посдуа
-https://www.wildberries.ru/catalog/527638309/detail.aspx
-https://www.wildberries.ru/catalog/1011701906/detail.aspx 
-#2 отзыва
+#TRUE BALANCE Футболка поло с коротким рукавом
+https://www.wildberries.ru/catalog/629199607/detail.aspx?size=851783557
 
-#Мебель
-https://www.wildberries.ru/catalog/147935373/detail.aspx
-https://www.wildberries.ru/catalog/155871590/detail.aspx
-https://www.wildberries.ru/catalog/90612442/detail.aspx
+#Свитшот оверсайз без начеса
+https://www.wildberries.ru/catalog/567830422/detail.aspx?size=778497535
 
-# Косметика
-https://www.wildberries.ru/catalog/165879171/detail.aspx
-https://www.wildberries.ru/catalog/332672322/detail.aspx
+#KLOG Тени для век палетка блестящие серебристые
+https://www.wildberries.ru/catalog/178619291/detail.aspx?size=295600228
 
+#Jurello Солнцезащитный крем для лица тела масло для загара спф 6
+https://www.wildberries.ru/catalog/365139998/detail.aspx?size=535047561
+
+#lovelin Веер складной японский для танцев
+https://www.wildberries.ru/catalog/175286908/detail.aspx?size=290499899
+
+#Микаса Босоножки летние, Сандалии
+https://www.wildberries.ru/catalog/229009599/detail.aspx?size=361957535
+
+#LUXE ODOR Духи Белый Шоколад
+https://www.wildberries.ru/catalog/530742410/detail.aspx?size=731296700
+
+#Nike Шорты
+https://www.wildberries.ru/catalog/319658211/detail.aspx?size=481439519
+
+#loid Ночник детский Уставшая уточка светильник
+https://www.wildberries.ru/catalog/172908992/detail.aspx?size=286833965
+
+#RudyShop Диспенсер для бумажных полотенец
+https://www.wildberries.ru/catalog/237848262/detail.aspx?size=374307415
+
+#Maxidez Чистящая паста розовая средство Pinky Clean для уборки 1кг
+https://www.wildberries.ru/catalog/213566096/detail.aspx?size=341142706
+
+#RAYAN COSMETICS Блеск для губ 4в1
+https://www.wildberries.ru/catalog/313459685/detail.aspx?size=473539394
+
+#GRAFFIX Летние спортивные широкие брюки карго оверсайз
+https://www.wildberries.ru/catalog/245282952/detail.aspx?size=384589331
+
+#X-Plode Кожаные ботинки демисезонные классические
+https://www.wildberries.ru/catalog/38051455/detail.aspx?size=575542913
+
+#Meromi Диффузор для дома с фибровыми палочками ароматизатор
+https://www.wildberries.ru/catalog/192181377/detail.aspx?size=313636403
+
+#JOYCITY Мюли на каблуке летние замшевые
+https://www.wildberries.ru/catalog/430988195/detail.aspx?size=612842521
+
+#Molle Bisou Солнцезащитные очки квадратные модные тренд 2026
+https://www.wildberries.ru/catalog/224742083/detail.aspx?size=356227071
+
+#SADOER Воск для укладки бороды
+https://www.wildberries.ru/catalog/307877901/detail.aspx?size=466679549
+
+#GlassOn Графин для воды с фильтр-крышкой 1,5 л
+https://www.wildberries.ru/catalog/91167724/detail.aspx?size=146665153
+
+#DolphinUmbrellas Зонт автомат белый от солнца
+https://www.wildberries.ru/catalog/367057548/detail.aspx?size=537524574
+
+#AVIETA HOME Корзинка для хранения плетеная
+https://www.wildberries.ru/catalog/100749020/detail.aspx?size=158779244
+
+#GILLETTE Пена для бритья Series Sensitive, доп защита, 300 мл
+https://www.wildberries.ru/catalog/401877971/detail.aspx?size=579708381
+
+#YESFASHION Платье вечернее лапша с воротником в рубчик
+https://www.wildberries.ru/catalog/239966781/detail.aspx?size=377272780
+
+#Natural Beauty Состав для химической завивки, прикорневой объем и антихимия
+https://www.wildberries.ru/catalog/10984352/detail.aspx?size=35116861
+
+#ФрутоНяня Каша кукурузная безмолочная, 180г
+https://www.wildberries.ru/catalog/327468652/detail.aspx?size=491465336
+
+#Микаса Кроссовки детские
+https://www.wildberries.ru/catalog/325120114/detail.aspx?size=488102692
+
+#ТВОЕ Плотная белая майка из хлопка
+https://www.wildberries.ru/catalog/12035864/detail.aspx?size=37708028
+
+#KING THOR Набор бритва мужская женская станок_многоразовый одноразовый
+https://www.wildberries.ru/catalog/264070991/detail.aspx?size=409888283
+
+#Blackton Утюг Bt SI1110 Бело-красный 1200Вт
+https://www.wildberries.ru/catalog/180931748/detail.aspx?size=298924705
+
+#Spook Bot Детский электросамокат Q4
+https://www.wildberries.ru/catalog/301166799/detail.aspx?size=457644237
+
+#SOKOLOV Кольцо серебро 925
+https://www.wildberries.ru/catalog/6713932/detail.aspx?size=23554933
+
+#Rеynа Защитное стекло на iPhone 13 Pro айфон
+https://www.wildberries.ru/catalog/338534595/detail.aspx?size=504912323
+
+#O2 Young adult книги До встречи,мой король Том 1 Комикс Графический роман Маньхуа
+https://www.wildberries.ru/catalog/232855815/detail.aspx?size=367238731
+
+#GQbox Наушники с микрофоном Jack 3,5
+https://www.wildberries.ru/catalog/16530335/detail.aspx?size=46838126
+
+#Khiya Company боксерские перчатки для бокса детски
+https://www.wildberries.ru/catalog/168215519/detail.aspx?size=279663146
+
+#ДСВ Мебель Шкаф для одежды в спальню с ящиками 90 см
+https://www.wildberries.ru/catalog/101318476/detail.aspx?size=159443534
+
+#BESTLIKE Кукла-пупс для девочки с аксессуарами
+https://www.wildberries.ru/catalog/504275733/detail.aspx?size=700133592
+
+#Игрушка лабубу стич мягкий плюшевый брелок с подарком
+https://www.wildberries.ru/catalog/472680480/detail.aspx?size=662709738
+
+#ARIGATO Аэрогриль электрический для дома 2000 Вт - аэрофритюрница
+https://www.wildberries.ru/catalog/430253406/detail.aspx?size=611961214
+
+#Skiico 3д lego конструктор ночник цветы сакуры с подсветкой
+https://www.wildberries.ru/catalog/255360769/detail.aspx?size=398083892
+
+#KONONO Зеркало напольное интерьерное подвесное
+https://www.wildberries.ru/catalog/254926841/detail.aspx?size=397521082
+
+#LAMIFIT Скакалка спортивная
+https://www.wildberries.ru/catalog/320248558/detail.aspx?size=482082945
+
+#Издательство CLEVER Книги романы. 12 правил, чтобы не влюбиться
+https://www.wildberries.ru/catalog/586360875/detail.aspx?size=801343603
+
+#Carpanomia Золотой браслет на руку ювелирный 585 пробы
+https://www.wildberries.ru/catalog/292068645/detail.aspx?size=445363673
+
+#DIY CENTER Осушитель воздуха для дома и ванной от плесени и сырости
+https://www.wildberries.ru/catalog/152152045/detail.aspx?size=254735105
+
+#Suns Store Силиконовый ремешок для Redmi Watch 2 Lite, POCO Watch
+https://www.wildberries.ru/catalog/161286546/detail.aspx?size=267986117
+
+#РУЧНОЙ ВЕНТИЛЯТОР Вентилятор ручной настольный USB
+https://www.wildberries.ru/catalog/161748995/detail.aspx?size=268851678
+
+#AMI Диван-кровать раскладной бескаркасный 142х190
+https://www.wildberries.ru/catalog/559620348/detail.aspx?size=768523258
+
+#GEMBIRD Флешка USB 2.0 8 Гб
+https://www.wildberries.ru/catalog/499506074/detail.aspx?size=694289767
+
+#ALTEXTREME Балаклава подшлемник
+https://www.wildberries.ru/catalog/197026833/detail.aspx?size=319599580
+
+#Квадрат Кровать двуспальная металлическая Мира 160х200 см
+https://www.wildberries.ru/catalog/225924751/detail.aspx?size=357814341
+
+#POCO Смартфон C71 Black Черный 4G+128G
+https://www.wildberries.ru/catalog/454842180/detail.aspx?size=641426577
+
+#NETIS Роутер Wi-Fi W300A, 2.4 ГГц
+https://www.wildberries.ru/catalog/455004373/detail.aspx?size=641608340
+
+#Издательство Манн, Иванов и Фербер Как устроена экономика. Покетбук NEON
+https://www.wildberries.ru/catalog/462042658/detail.aspx?size=650121621
